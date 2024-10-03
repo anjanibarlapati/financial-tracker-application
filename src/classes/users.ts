@@ -130,17 +130,49 @@ export class User implements IUser  {
    
    addSavingsGoal(savingsGoal: ISavingsGoal) {
 
+        if(savingsGoal.targetAmount <=0){
+            throw new Error("Savings goal target amount should be greater than zero");
+        }
+        if(savingsGoal.currentAmountSaved<0){
+            throw new Error("Savings goal current saved amount should be non-negative amount");
 
+        }
+
+        const goal:boolean = this.savingsGoals.some(s=> s.title === savingsGoal.title);
+        if(goal){
+            throw new Error("Savings goal with this title already exists");
+        }
+        
+        this.savingsGoals.push(savingsGoal);
 
    }
 
    addAmountToASavingsGoal(title: string, amount: number) {
 
+        if(amount<= 0){
+            throw new Error("Updated current saved amount should be greater than zero")
+        }
+        const index:number = this.savingsGoals.findIndex(s=> s.title === title);
+        if(index === -1){
+            throw new Error("Savings goal with this title do not exist");
+        }
+        if( this.savingsGoals[index].currentAmountSaved + amount > this.savingsGoals[index].targetAmount){
+            throw new Error("Saving amount exceeding target amount");
+        }
+        this.savingsGoals[index].currentAmountSaved= amount;
 
    }
 
    checkSavingsGoalProgress (title: string){
-     return 0;
+
+        const index:number = this.savingsGoals.findIndex(s=> s.title === title);
+        if(index === -1){
+            throw new Error("Savings goal with this title do not exist");
+        }
+        const targetAmount = this.savingsGoals[index].targetAmount;
+        const amountSaved = this.savingsGoals[index].currentAmountSaved;
+        const progress: number = Number(((amountSaved/targetAmount)*100).toFixed(0));
+        return progress;
    }
 
 }
