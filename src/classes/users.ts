@@ -24,7 +24,22 @@ export class User implements IUser  {
       this.availableBalance = 0;   
    }
 
+   isValidTransaction(txn:ITransaction){
+
+      if(txn.amount<=0)
+          throw new Error("Transaction amount should greater than zero");
+  
+      if(txn.category.trim()==='')
+          throw new Error("Transaction category should be non-empty");
+  
+      if(txn.type==="debit" && txn.amount > this.availableBalance)
+          throw new Error("Insufficient balance");
+       
+  }
+
    transaction(txn:ITransaction){
+
+      this.isValidTransaction(txn);
       
       this.transactions.push(txn);
 
