@@ -17,4 +17,8 @@ describe("User Authentication Functionality",()=>{
         expect(()=>login("anjani", "12345")).toThrow('Username and password should be valid');
     });
 
+    test("should throw an error if username or password is not given", ()=>{
+        expect(()=>login("12345")).toThrow('Provide both username and password');
+    })
+
 })
