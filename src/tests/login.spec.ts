@@ -26,7 +26,11 @@ describe("User Authentication Functionality",()=>{
     });
 
     test("should throw an error if username is empty", ()=>{
-        expect(()=>login("","anjani123")).toThrow('Username should be non-empty');
+        expect(()=>login("","anjani123")).toThrow('Username and password should be non-empty');
+    })
+
+    test("should throw an error if password is empty", ()=>{
+        expect(()=>login("anjani","")).toThrow('Username and password should be non-empty');
     })
 
 })
