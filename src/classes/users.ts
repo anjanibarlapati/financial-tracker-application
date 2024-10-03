@@ -39,6 +39,9 @@ export class User implements IUser  {
          }
          this.totalIncome+=txn.amount;
      }
+     else{
+      this.availableBalance-=txn.amount;
+     } 
    }
 
 }
