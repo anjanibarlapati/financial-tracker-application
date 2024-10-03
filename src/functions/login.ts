@@ -4,7 +4,7 @@ export function login(...credentials:string[]){
 
     const [username, password] = credentials;
 
-    if(credentials.length==1) {
+    if(credentials.length!=2) {
         throw new Error('Provide both username and password') ;
     } 
 
