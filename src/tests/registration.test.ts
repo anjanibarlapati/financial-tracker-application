@@ -28,4 +28,8 @@ describe("User Registration Functionality", () => {
         expect(()=>register("password123")).toThrow('Provide both username and password');
     });
 
+    test("should throw an error if both username and password is not given", ()=>{
+        expect(()=>register()).toThrow('Provide both username and password');
+    });
+
 });
