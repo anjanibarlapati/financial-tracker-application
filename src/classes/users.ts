@@ -1,6 +1,7 @@
 import { users } from "../data/users";
 import { IBudget } from "../interfaces/budget";
 import { IIncome } from "../interfaces/income";
+import { ISavingsGoal } from "../interfaces/savingsGoals";
 import { ITransaction } from "../interfaces/transactions";
 import { IUser } from "../interfaces/user";
 
@@ -16,6 +17,7 @@ export class User implements IUser  {
    availableBalance: number;
    budgets: IBudget[];
    totalBudget: number;
+   savingsGoals: ISavingsGoal[];
 
    constructor( username:string, password:string ){
       this.id = users.length+1;
@@ -27,6 +29,7 @@ export class User implements IUser  {
       this.availableBalance = 0;  
       this.budgets = [];
       this.totalBudget = 0; 
+      this.savingsGoals = [];
    }
 
    isValidTransaction(txn:ITransaction){
@@ -123,6 +126,21 @@ export class User implements IUser  {
             throw new Error("Budget for this category do not exist");
         }
         return this.budgets[budgetIndex].amountSpent;
+   }
+   
+   addSavingsGoal(savingsGoal: ISavingsGoal) {
+
+
+
+   }
+
+   addAmountToASavingsGoal(title: string, amount: number) {
+
+
+   }
+
+   checkSavingsGoalProgress (title: string){
+     return 0;
    }
 
 }

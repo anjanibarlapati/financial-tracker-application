@@ -1,5 +1,6 @@
 import { IBudget } from "./budget";
 import { IIncome } from "./income";
+import { ISavingsGoal } from "./savingsGoals";
 import { ITransaction } from "./transactions";
 
 export interface IUser{
@@ -12,10 +13,15 @@ export interface IUser{
     availableBalance:number;
     budgets:IBudget[];
     totalBudget:number;
+    savingsGoals:ISavingsGoal[];
     transaction: (txn:ITransaction) => void;
     isValidTransaction: (txn:ITransaction) => void;
     setBudget: (category:string, amount:number) => void;
     updateBudgetAmount: (category:string, amount:number)=>void;
     checkBudgetSpent: (category:string) => number;
-    updateBudgetAmountSpent: (txn:ITransaction)=>void;
+    updateBudgetAmountSpent: (txn:ITransaction) => void;
+    addSavingsGoal: (savingsGoal:ISavingsGoal) => void;
+    addAmountToASavingsGoal: (title:string, amount:number ) => void;
+    checkSavingsGoalProgress: (title:string) => number;
+
 }
