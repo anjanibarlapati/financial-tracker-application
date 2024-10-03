@@ -178,10 +178,47 @@ export class User implements IUser  {
 
    financialReportBudget(txn:ITransaction, budgets:IFinancialReportBudget[]){
 
+        const index = budgets.findIndex(b=>b.category=== txn.category);
+        if(index===-1){
+            budgets.push({category: txn.category, amountSpent: txn.amount});
+        }
+        else{
+            budgets[index].amountSpent+= txn.amount;
+        }
     }
 
    financialReport(fromDate: Date, toDate: Date) {
+        let totalIncome:number = 0, totalExpenses:number = 0;
+        let budgets:IFinancialReportBudget[] = [];
+        let savingsGoals: IFinancialReportSavingsGoal[] = [];
+        let report :IFinancialReport;
 
+        if(fromDate> toDate){
+            throw new Error("Invalid period");
+        }
+
+        for(let i=0;i<this.transactions.length;i++){
+        
+            if(this.transactions[i].type==='debit' && this.transactions[i].date >= fromDate && this.transactions[i].date <= toDate){
+                totalExpenses+=this.transactions[i].amount;
+                if(this.transactions[i].category!=="Other"){
+                    this.financialReportBudget(this.transactions[i], budgets);
+                }
+            }
+            if(this.transactions[i].type==='credit' && this.transactions[i].date >= fromDate && this.transactions[i].date <= toDate){
+                totalIncome += this.transactions[i].amount;
+            }
+        }
+        savingsGoals= this.savingsGoals.map(goal=> {
+            return {title: goal.title,  progress: ((goal.currentAmountSaved/goal.targetAmount)*100).toFixed(0)+"%"}
+        });
+        report={
+            totalIncome: totalIncome,
+            totalExpenses:totalExpenses,
+            budgets:budgets,
+            savingsGoals: savingsGoals
+        }
+        return report ;
    }
 
 }
