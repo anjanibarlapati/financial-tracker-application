@@ -5,6 +5,10 @@ export function register(...credentials:string[]){
 
     const [username, password] = credentials;
 
+    if(credentials.length!=2) {
+        throw new Error('Provide both username and password') ;
+    } 
+
     if (!username || !password) {
         throw new Error('Username and password should be non-empty');
     }
