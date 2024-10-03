@@ -7,5 +7,10 @@ describe("User Authentication Functionality",()=>{
 
         register("anjani", "anjani123");
         expect(login("anjani", "anjani123")).toBeTruthy()
-    })
+    });
+
+    test("should throw an error if username is inavlid", ()=>{
+        expect(()=>login("anjaniii", "anjani123")).toThrow('Username and password should be valid');
+    });
+
 })
