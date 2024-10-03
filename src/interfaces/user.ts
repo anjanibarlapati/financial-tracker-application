@@ -9,4 +9,5 @@ export interface IUser{
     totalIncome:number;
     transactions:ITransaction[];
     availableBalance:number;
+    transaction: (txn:ITransaction) => void;
 }
