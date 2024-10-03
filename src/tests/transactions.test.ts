@@ -26,5 +26,13 @@ describe("Transactions Functionality",()=>{
         expect(user.availableBalance).toBe(20000);  
         expect(user.totalIncome).toBe(20000);
     });
+
+    test("Should debit given amount when all correct details are provided",()=>{
+        const user = login("anjani", "anjani123");
+
+        const txn:ITransaction = {id:user.transactions.length+1, type: "debit", amount:1000, category:"Groceries", date:new Date()}
+        user.transaction(txn);
+        expect(user.availableBalance).toBe(19000);   
+    })
     
 })
