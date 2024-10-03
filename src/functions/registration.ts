@@ -3,8 +3,8 @@ import { users } from "../data/users";
 
 export function register(...credentials:string[]){
     const [username, password] = credentials;
-    if (!username) {
-        throw new Error('Username should be non-empty');
+    if (!username || !password) {
+        throw new Error('Username and password should be non-empty');
     }
     const user = new User(username, password);
     users.push(user);
