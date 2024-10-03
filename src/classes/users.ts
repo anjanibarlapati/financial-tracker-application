@@ -1,5 +1,6 @@
 import { users } from "../data/users";
 import { IBudget } from "../interfaces/budget";
+import { IFinancialReport, IFinancialReportBudget, IFinancialReportSavingsGoal } from "../interfaces/financialReport";
 import { IIncome } from "../interfaces/income";
 import { ISavingsGoal } from "../interfaces/savingsGoals";
 import { ITransaction } from "../interfaces/transactions";
@@ -173,6 +174,14 @@ export class User implements IUser  {
         const amountSaved = this.savingsGoals[index].currentAmountSaved;
         const progress: number = Number(((amountSaved/targetAmount)*100).toFixed(0));
         return progress;
+   }
+
+   financialReportBudget(txn:ITransaction, budgets:IFinancialReportBudget[]){
+
+    }
+
+   financialReport(fromDate: Date, toDate: Date) {
+
    }
 
 }
