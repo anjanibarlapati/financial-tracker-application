@@ -17,6 +17,11 @@ describe("User Registration Functionality", () => {
 
     test("should throw an error if both username and passowrd is empty", ()=>{
         expect(()=>register("","")).toThrow('Username and password should be non-empty');
-    })
+    });
+
+    test("should throw an error if username is already exist", () => {
+        register("seetha", "seetha123");
+        expect(() => register("seetha", "12345")).toThrow('Username is already exist');
+    });
 
 });
