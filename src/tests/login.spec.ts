@@ -23,6 +23,10 @@ describe("User Authentication Functionality",()=>{
 
     test("should throw an error if both username and password is not given", ()=>{
         expect(()=>login()).toThrow('Provide both username and password');
+    });
+
+    test("should throw an error if username is empty", ()=>{
+        expect(()=>login("","anjani123")).toThrow('Username should be non-empty');
     })
 
 })
