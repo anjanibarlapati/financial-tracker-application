@@ -24,4 +24,8 @@ describe("User Registration Functionality", () => {
         expect(() => register("seetha", "12345")).toThrow('Username is already exist');
     });
 
+    test("should throw an error if username or password is not given", ()=>{
+        expect(()=>register("password123")).toThrow('Provide both username and password');
+    });
+
 });
