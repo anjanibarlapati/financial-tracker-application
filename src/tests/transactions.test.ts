@@ -1,11 +1,12 @@
 import { User } from "../classes/users";
-import { login } from "../functions/login";
 import { register } from "../functions/registration";
 import { ITransaction } from "../interfaces/transactions";
 
 
 describe("Transactions Functionality",()=>{
+
     let user:User;
+    
     beforeAll(()=>{
       user = register("anjani", "anjani123");
     })
@@ -38,17 +39,30 @@ describe("Transactions Functionality",()=>{
 
     test("should throw an error when debit amount is more than the available balance", () => {
 
-        const txn:ITransaction = {id:user.transactions.length+1, type: "debit", amount:100000, category:"Salary", date:new Date()}
+        const txn:ITransaction = {id:user.transactions.length+1, type: "debit", amount:100000, category:"Groceries", date:new Date()}
         expect(() => user.transaction( txn)).toThrow("Insufficient balance");
     });
 
     test("should throw an error when transaction details invalid", () => {
 
-        const txn1:ITransaction = {id:user.transactions.length+1, type: "debit", amount:-100, category:"Salary", date:new Date()}
+        const txn1:ITransaction = {id:user.transactions.length+1, type: "debit", amount:-100, category:"Groceries", date:new Date()}
         const txn2:ITransaction = {id:user.transactions.length+1, type: "debit", amount:100, category:"", date:new Date()}
 
         expect(() => user.transaction( txn1)).toThrow("Transaction amount should greater than zero");
         expect(() => user.transaction( txn2)).toThrow("Transaction category should be non-empty");
+    });
+
+    test("should throw an error when budget is insufficient for an existing category", () => {
+
+        user.setBudget("Groceries", 1000);
+        const txn: ITransaction = { id: user.transactions.length + 1, type: "debit", amount: 2000, category: "Groceries", date: new Date() };
+        expect(() => user.transaction(txn)).toThrow("Insufficient budget for given category");
+    });
+
+    test("should allow a debit transaction when the budget category does not exist", () => {
+        const txn: ITransaction = { id: user.transactions.length + 1, type: "debit", amount: 500, category: "Travel", date: new Date() };
+        user.transaction(txn);
+        expect(user.availableBalance).toBe(18500); 
     });
     
 })

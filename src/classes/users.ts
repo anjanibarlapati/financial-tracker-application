@@ -42,6 +42,11 @@ export class User implements IUser  {
        
     }
 
+    updateBudgetAmountSpent(txn:ITransaction){
+    
+
+    }
+
     transaction(txn:ITransaction){
 
          this.isValidTransaction(txn);
@@ -59,7 +64,8 @@ export class User implements IUser  {
             }
             this.totalIncome+=txn.amount;
         }
-         else{
+        else{
+            this.updateBudgetAmountSpent(txn);
             this.availableBalance-=txn.amount;
         } 
    }
@@ -89,7 +95,7 @@ export class User implements IUser  {
         if(budgetIndex === -1){
             throw new Error("Budget for this category do not exist");
         }
-        if(amount<0){
+        if(amount<=0){
             throw new Error("Updated budget amount should be greater than zero")
         }
 

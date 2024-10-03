@@ -38,8 +38,8 @@ describe("Budget Functionality",()=>{
 
     test("Should throw an error when update an existing budget with non-positive amount", () => {
 
-        expect(() => user.setBudget("Entertainment", -1000)).toThrow("Updated budget amount should be greater than zero");
-        expect(() => user.setBudget("Entertainment", 0)).toThrow("Updated budget amount should be greater than zero");
+        expect(() => user.updateBudgetAmount("Entertainment", -1000)).toThrow("Updated budget amount should be greater than zero");
+        expect(() => user.updateBudgetAmount("Entertainment", 0)).toThrow("Updated budget amount should be greater than zero");
     });
 
     test("Should throw an error when updating a budget category that does not exist", () => {

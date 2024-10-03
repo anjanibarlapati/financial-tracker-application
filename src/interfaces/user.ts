@@ -17,4 +17,5 @@ export interface IUser{
     setBudget: (category:string, amount:number) => void;
     updateBudgetAmount: (category:string, amount:number)=>void;
     checkBudgetSpent: (category:string) => number;
+    updateBudgetAmountSpent: (txn:ITransaction)=>void;
 }
