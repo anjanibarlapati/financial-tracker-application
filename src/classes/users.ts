@@ -30,7 +30,13 @@ export class User implements IUser  {
 
       if(txn.type=== 'credit'){
          this.availableBalance+=txn.amount;
-         this.income.push({source:txn.category, amount:txn.amount});
+         const index = this.income.findIndex(i=>i.source=== txn.category);
+         if(index===-1){
+             this.income.push({source:txn.category, amount:txn.amount});
+         }
+         else{
+             this.income[index].amount+=txn.amount;
+         }
          this.totalIncome+=txn.amount;
      }
    }
