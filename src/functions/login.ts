@@ -8,8 +8,8 @@ export function login(...credentials:string[]){
 
     const [username, password] = credentials;
 
-    if (!username) {
-        throw new Error('Username should be non-empty');
+    if (!username || !password) {
+        throw new Error('Username and password should be non-empty');
      }
 
     const user = users.find((user)=>user.username === username && user.password === password);
