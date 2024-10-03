@@ -54,6 +54,7 @@ export class User implements IUser  {
            return;
         }
         if(budget.amount-(budget.amountSpent+txn.amount) < 0){
+            console.log("Insufficient budget for given category");
             throw new Error("Insufficient budget for given category");
         }
         this.budgets.forEach((b)=>{
@@ -173,7 +174,12 @@ export class User implements IUser  {
         const targetAmount = this.savingsGoals[index].targetAmount;
         const amountSaved = this.savingsGoals[index].currentAmountSaved;
         const progress: number = Number(((amountSaved/targetAmount)*100).toFixed(0));
+
+        if(progress >= 90){
+            console.log(`You have reached ${progress}% of the target amount`);
+        }
         return progress;
+
    }
 
    financialReportBudget(txn:ITransaction, budgets:IFinancialReportBudget[]){
