@@ -44,7 +44,19 @@ export class User implements IUser  {
 
     updateBudgetAmountSpent(txn:ITransaction){
     
-
+        const budget = this.budgets.find((b) => b.category === txn.category);
+    
+        if(!budget){
+           return;
+        }
+        if(budget.amount-(budget.amountSpent+txn.amount) < 0){
+            throw new Error("Insufficient budget for given category");
+        }
+        this.budgets.forEach((b)=>{
+            if(b.category===txn.category) {
+                return b.amountSpent+=txn.amount;
+            }
+        })
     }
 
     transaction(txn:ITransaction){
