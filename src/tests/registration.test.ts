@@ -10,9 +10,13 @@ describe("User Registration Functionality", () => {
     test("should throw an error when username is empty", ()=>{
         expect(()=>register("","anjani123")).toThrow('Username and password should be non-empty');
     });
-    
+
     test("should throw an error if password is empty", ()=>{
         expect(()=>register("anjaniii","")).toThrow('Username and password should be non-empty');
+    });
+
+    test("should throw an error if both username and passowrd is empty", ()=>{
+        expect(()=>register("","")).toThrow('Username and password should be non-empty');
     })
 
 });
