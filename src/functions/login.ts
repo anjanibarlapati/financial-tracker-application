@@ -2,11 +2,15 @@ import { users } from "../data/users";
 
 export function login(...credentials:string[]){
 
-    const [username, password] = credentials;
-
     if(credentials.length!=2) {
         throw new Error('Provide both username and password') ;
     } 
+
+    const [username, password] = credentials;
+
+    if (!username) {
+        throw new Error('Username should be non-empty');
+     }
 
     const user = users.find((user)=>user.username === username && user.password === password);
 
