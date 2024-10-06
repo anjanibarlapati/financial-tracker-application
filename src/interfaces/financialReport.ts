@@ -11,6 +11,4 @@ export interface IFinancialReportSavingsGoal  {
 export interface IFinancialReport {
     totalIncome: number;
     totalExpenses:number;
-    budgets:IFinancialReportBudget[];
-    savingsGoals: IFinancialReportSavingsGoal[];
 }

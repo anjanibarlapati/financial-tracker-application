@@ -1,6 +1,6 @@
 import { User } from "../classes/users";
 import { register } from "../functions/registration";
-import { IFinancialReport } from "../interfaces/financialReport";
+import { IFinancialReport, IFinancialReportBudget, IFinancialReportSavingsGoal } from "../interfaces/financialReport";
 import { ITransaction } from "../interfaces/transactions";
 
 describe("Financial Report Functionality",()=>{
@@ -48,55 +48,52 @@ describe("Financial Report Functionality",()=>{
         savings.forEach(s=>user.addSavingsGoal(s));
     })
 
-
-    test("Should return the financial report of given user",()=>{
+    test("Should return total income and expenses financial report of a user",()=>{
 
         const report1:IFinancialReport = {
             totalIncome: 55000,
             totalExpenses: 5693,
-            budgets: [
-                { category: 'Travel', amountSpent: 350 },
-                { category: 'Groceries', amountSpent: 3800 },
-                { category: 'Entertainment', amountSpent: 700 }
-            ],
-            savingsGoals: [
-                { title: 'Travel', progress: '75%' },
-                { title: 'Home', progress: '76%' },
-                { title: 'Emergency Fund', progress: '70%' }
-            ]
         }
-        const report2:IFinancialReport =     {
+        const report2:IFinancialReport = {
             totalIncome: 1300,
             totalExpenses: 2732,
-            budgets: [
-              { category: 'Entertainment', amountSpent: 300 },
-              { category: 'Travel', amountSpent: 450 },
-              { category: 'Groceries', amountSpent: 1200 }
-            ],
-            savingsGoals: [
-              { title: 'Travel', progress: '75%' },
-              { title: 'Home', progress: '76%' },
-              { title: 'Emergency Fund', progress: '70%' }
-            ]
         }    
         const report3:IFinancialReport = {
             totalIncome: 0,
             totalExpenses: 0,
-            budgets: [],
-            savingsGoals: [
-                { title: 'Travel', progress: '75%' },
-                { title: 'Home', progress: '76%' },
-                { title: 'Emergency Fund', progress: '70%' }
-            ]
         }
-        expect(user.financialReport(new Date("2024-09-05"), new Date("2024-09-15"))).toEqual(report1);
-        expect(user.financialReport(new Date("2024-09-20"), new Date("2024-09-26"))).toEqual(report2);
-        expect(user.financialReport(new Date("2024-09-01"), new Date("2024-09-04"))).toEqual(report3);
+        expect(user.totalIncomeAndExpenses(new Date("2024-09-05"), new Date("2024-09-15"))).toEqual(report1);
+        expect(user.totalIncomeAndExpenses(new Date("2024-09-20"), new Date("2024-09-26"))).toEqual(report2);
+        expect(user.totalIncomeAndExpenses(new Date("2024-09-01"), new Date("2024-09-04"))).toEqual(report3);
 
-    });
+    })
 
     test("Should throw an error when give period is invalid",()=>{
-       expect(()=>user.financialReport(new Date("2024-09-20"), new Date("2024-09-08"))).toThrow("Invalid period");
+        expect(()=>user.totalIncomeAndExpenses(new Date("2024-09-20"), new Date("2024-09-08"))).toThrow("Invalid period");
+     })
+    
+    test("Should return summary of budget usage across different categories", ()=>{
+
+        const report:IFinancialReportBudget[] = [
+                { category: 'Travel', amountSpent: 800 },
+                { category: 'Groceries', amountSpent: 5000 },
+                { category: 'Entertainment', amountSpent: 1000 }
+        ]
+        expect(user.budgetSummary()).toEqual(report);
+
     })
+
+    test("Should return progress towards savings goals", ()=>{
+
+        const report:IFinancialReportSavingsGoal[] = [
+            { title: 'Travel', progress: '75%' },
+            { title: 'Home', progress: '76%' },
+            { title: 'Emergency Fund', progress: '70%' }
+        ]
+        expect(user.savingsGoalsProgress()).toEqual(report);
+
+    })
+
+
 })
 
