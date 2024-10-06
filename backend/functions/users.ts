@@ -9,3 +9,12 @@ export async function insertUser(user: User) {
     }
 }
 
+export async function getUsers() {
+    try {
+        const response = await axios.get('http://localhost:4321/users');
+        return response.data;
+    } catch (error) {
+        throw new Error('Failed to fetch users');
+    }
+}
+

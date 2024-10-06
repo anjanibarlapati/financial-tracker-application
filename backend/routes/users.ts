@@ -14,4 +14,13 @@ userRouter.post('/user', async (req:Request, res:Response) => {
     }
 });
 
+userRouter.get('/users', async(req:Request, res:Response)=>{
+    try {
+        const users=  await User.find();
+        res.json(users);
+       } catch (error) {
+         res.status(500).json({ message: 'Error while getting all users' });
+       }
+})
+
 
