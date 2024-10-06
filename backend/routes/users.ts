@@ -23,4 +23,12 @@ userRouter.get('/users', async(req:Request, res:Response)=>{
        }
 })
 
+userRouter.get('/user', async(req:Request, res:Response)=>{
+  try{
+    const user = await User.findOne({username:req.params.username, password: req.params.password});
+    res.json(user);
+  } catch(error){
+    res.status(500).json({ message: 'Error while getting user' });
+  }
+});
 

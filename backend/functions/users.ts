@@ -18,3 +18,13 @@ export async function getUsers() {
     }
 }
 
+export async function findUser(username: string, password: string) {
+    try {
+        const response = await axios.get('http://localhost:4321/user', {
+            params: { username: username, password: password }
+        });
+        return response.data;
+    } catch (error) {
+        throw new Error('Failed to find user');
+    }
+}
