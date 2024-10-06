@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { IUser } from '../interfaces/user';
-import { getUsers, insertUser } from '../../backend/functions/users';
+import { findUser, getUsers, insertUser } from '../../backend/functions/users';
 import { User } from '../classes/users';
 
 jest.mock('axios');
@@ -46,5 +46,22 @@ describe("User Routes", () => {
         (axios.get as jest.Mock).mockRejectedValue(new Error(errorMessage));
         
         await expect(getUsers()).rejects.toThrow('Failed to fetch users');
+    });
+
+    it("Should send a GET request to find a specific user", async () => {
+        (axios.get as jest.Mock).mockResolvedValue({ data: user });
+        
+        const result = await findUser("abc", "abc");
+        
+        expect(axios.get).toHaveBeenCalledWith('http://localhost:4321/user', {
+            params: { username: "abc", password: "abc" }
+        });
+        expect(result).toEqual(user);
+    });
+
+    it("Should handle error when finding a specific user", async () => {
+        const errorMessage = 'Error finding user';
+        (axios.get as jest.Mock).mockRejectedValue(new Error(errorMessage));
+        await expect(findUser("abc", "abc")).rejects.toThrow('Failed to find user');
     });
 });
