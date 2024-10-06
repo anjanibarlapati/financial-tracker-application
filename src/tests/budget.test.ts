@@ -64,8 +64,13 @@ describe("Budget Functionality",()=>{
         expect(()=>user.checkBudgetSpent("Travel")).toThrow("Budget for this category do not exist");
     })
 
-    test("Should throw an error when add budget category exceeds available balance",()=>{
+    test("Should throw an error when adding budget category exceeds available balance",()=>{
         
         expect(()=>user.setBudget("Rent", 20000)).toThrow("Adding this budget will exceeds the available balance");
+    })
+
+    test("Should throw an error when updating budget category exceeds available balance",()=>{
+        
+        expect(()=>user.updateBudgetAmount("Groceries", 20000)).toThrow("Updating this budget will exceeds the available balance");
     })
 })

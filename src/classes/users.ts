@@ -1,4 +1,3 @@
-import { users } from "../data/users";
 import { IBudget } from "../interfaces/budget";
 import { IFinancialReport, IFinancialReportBudget, IFinancialReportSavingsGoal } from "../interfaces/financialReport";
 import { IIncome } from "../interfaces/income";
@@ -8,8 +7,6 @@ import { IUser } from "../interfaces/user";
 
 
 export class User implements IUser {
-
-    id: number;
     username: string;
     password: string;
     income: IIncome[];
@@ -21,7 +18,6 @@ export class User implements IUser {
     savingsGoals: ISavingsGoal[];
 
     constructor(username: string, password: string) {
-        this.id = users.length + 1;
         this.username = username;
         this.password = password;
         this.income = [];
@@ -98,7 +94,7 @@ export class User implements IUser {
         if (amount <= 0) {
             throw new Error("Budget amount should be greater than zero")
         }
-        if (this.totalBudget + amount > this.totalIncome) {
+        if (this.totalBudget + amount > this.availableBalance) {
             throw new Error("Adding this budget will exceeds the available balance")
         }
         this.budgets.push({ category: category, amount: amount, amountSpent: 0 });
@@ -114,6 +110,10 @@ export class User implements IUser {
         }
         if (amount <= 0) {
             throw new Error("Updated budget amount should be greater than zero")
+        }
+
+        if (this.totalBudget + amount > this.availableBalance) {
+            throw new Error("Updating this budget will exceeds the available balance")
         }
 
         const currentBudget = this.budgets[budgetIndex].amount;
@@ -205,7 +205,6 @@ export class User implements IUser {
         return report;
 
     }
-
 
     financialReportBudget(txn: ITransaction, budgets: IFinancialReportBudget[]) {
 

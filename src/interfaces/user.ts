@@ -5,7 +5,6 @@ import { ISavingsGoal } from "./savingsGoals";
 import { ITransaction } from "./transactions";
 
 export interface IUser{
-    id:number;
     username: string;
     password: string;
     income:IIncome[];
