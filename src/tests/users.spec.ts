@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { IUser } from '../interfaces/user';
-import { findUser, getUsers, insertUser, updateBudgetAmountSpent,  } from '../../backend/functions/users';
+import { addTransaction, findUser, getUsers, insertUser, updateBudgetAmountSpent,  } from '../../backend/functions/users';
 import { User } from '../classes/users';
+import { ITransaction } from '../interfaces/transactions';
 
 jest.mock('axios');
 
@@ -67,7 +68,9 @@ describe("User Routes", () => {
     });
 
     it("Should update budget amount spent for the user", async () => {
-        const updatedUser = { ...user, budgets: [{ category: "groceries", amount: 1000, amountSpent: 100 }] };
+        user = { ...user, budgets: [{ category: "groceries", amount: 1000, amountSpent: 100 }] };
+        const updatedUser:IUser = {...user, budgets: [{ category: "groceries", amount: 1000, amountSpent: 200 }]};
+
         (axios.put as jest.Mock).mockResolvedValue({data:updatedUser});
 
         const result = await updateBudgetAmountSpent(user.username,"groceries", 100,);
@@ -81,6 +84,28 @@ describe("User Routes", () => {
         (axios.put as jest.Mock).mockRejectedValue(new Error(errorMessage));
 
         await expect(updateBudgetAmountSpent(user.username,"groceries", 1000,)).rejects.toThrow('Failed to update budget amount spent for the user');
+    });
+
+
+    it("Should add a transaction for the user", async () => {
+        user = { ...user, transactions: [ { "id": 1, "type": "credit", "amount": 10000, "category": "Rental Salary",  "date": new Date("2024-09-05")}] };
+
+       (axios.put as jest.Mock).mockResolvedValue({data:user});
+       const transaction:ITransaction = {id:user.transactions.length+1, type: "credit", amount:10000, category:"Salary", date:new Date()};;
+        const response = await addTransaction(user.username, transaction);
+
+        expect(axios.put).toHaveBeenCalledWith(`http://localhost:4321/user/transaction/${user.username}`, transaction);
+        expect(response).toEqual(user);
+ 
+    });
+
+    it("Should handle error when adding a transaction", async () => {
+
+        const errorMessage = 'Error adding transaction';
+        (axios.put as jest.Mock).mockRejectedValue(new Error(errorMessage));
+
+        const transaction :ITransaction = {id:user.transactions.length+1, type: "credit", amount:10000, category:"Salary", date:new Date()};;
+        await expect(addTransaction(user.username, transaction)).rejects.toThrow('Error while inserting new transaction for the user');
     });
 
 });
