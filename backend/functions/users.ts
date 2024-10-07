@@ -58,3 +58,15 @@ export async function addIncome(username:string, category:string, amount:number)
     } 
 }
 
+    
+export async function updateIncomeAmount(username:string, category:string, amount:number){
+    try {
+        const response = await axios.put(`http://localhost:4321/user/incomeamount/${username}`,{category:category, amount:amount});
+        return response.data;
+    } catch (error) {
+        throw new Error('Error while updating income user');
+    } 
+}
+
+
+
