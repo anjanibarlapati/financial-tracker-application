@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { IUser } from '../interfaces/user';
-import { addIncome, addTransaction, findUser, getUsers, insertUser, updateBudgetAmountSpent, updateIncomeAmount,  } from '../../backend/functions/users';
+import { addIncome, addTransaction, debitTransaction, findUser, getUsers, insertUser, updateBudgetAmountSpent, updateIncomeAmount,  } from '../../backend/functions/users';
 import { User } from '../classes/users';
 import { ITransaction } from '../interfaces/transactions';
 
@@ -144,6 +144,25 @@ describe("User Routes", () => {
         (axios.put as jest.Mock).mockRejectedValue(new Error(errorMessage));
 
         await expect(updateIncomeAmount(user.username, "salary",200)).rejects.toThrow('Error while updating income user');
+    });
+
+    it("Should handle debit transaction for the user", async () => {
+        const updatedUser = { ...user, transactions: [ { "id": 1, "type": "debit", "amount": 100, "category": "other",  "date": new Date("2024-09-05")}] };
+
+        (axios.put as jest.Mock).mockResolvedValue({data: updatedUser});
+
+        const response = await debitTransaction(user.username, 100);
+
+        expect(axios.put).toHaveBeenCalledWith(`http://localhost:4321/user/transaction/debit/${user.username}`, {amount: 100 });
+        expect(response).toEqual(updatedUser);
+
+    });
+
+    it("Should handle error when handling debit transaction", async () => {
+        const errorMessage = 'Error handling debit transaction';
+        (axios.put as jest.Mock).mockRejectedValue(new Error(errorMessage));
+
+        await expect(debitTransaction(user.username, 100)).rejects.toThrow('Error while updating user');
     });
 
 
