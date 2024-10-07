@@ -68,5 +68,14 @@ export async function updateIncomeAmount(username:string, category:string, amoun
     } 
 }
 
+export async function debitTransaction(username:string, amount:number){
+    try {
+        const response = await axios.put(`http://localhost:4321/user/transaction/debit/${username}`, {amount:amount});
+        return response.data;
+    } catch (error) {
+        throw new Error('Error while updating user');
+    }
+}
+
 
 

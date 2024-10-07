@@ -86,3 +86,19 @@ userRouter.put('/user/incomeamount/:username', async (req: Request, res: Respons
     res.status(500).json({ message: 'Error while updating income user' });
   }
 })
+
+
+userRouter.put('/user/transaction/debit/:username', async (req: Request, res: Response) => {
+  let result;
+  try {
+    result = await User.updateOne(
+      { username: req.params.username },
+      {
+        $dec: { availableBalance: req.body.amount }
+      }
+    );
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: 'Error while updating user' });
+  }
+})
