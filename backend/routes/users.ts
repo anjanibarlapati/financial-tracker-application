@@ -43,5 +43,15 @@ userRouter.put('/user/budgetamountspent/:username', async (req: Request, res: Re
   }
 })
 
-
+userRouter.put('/user/transaction/:username', async (req: Request, res: Response) => {
+  try {
+    const user = await User.updateOne(
+      { username: req.params.username },
+      { $push: { transactions: req.body } }
+    );
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: 'Error while inserting new transaction for the user' });
+  }
+})
 

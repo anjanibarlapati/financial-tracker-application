@@ -1,5 +1,6 @@
 import axios from "axios";
 import { User } from "../../src/classes/users";
+import { ITransaction } from "../../src/interfaces/transactions";
 
 export async function insertUser(user: User) {
     try {
@@ -36,6 +37,15 @@ export async function updateBudgetAmountSpent(username:string, category:string, 
         return response.data;
     } catch (error) {
         throw new Error('Failed to update budget amount spent for the user');
+    }
+}
+
+export async function addTransaction(username:string, transaction:ITransaction){
+    try {
+        const response = await axios.put(`http://localhost:4321/user/transaction/${username}`, transaction);
+        return response.data;
+    } catch (error) {
+        throw new Error('Error while inserting new transaction for the user');
     }
 }
 
