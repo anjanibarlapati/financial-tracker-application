@@ -1,8 +1,9 @@
 import axios from 'axios';
 import { IUser } from '../interfaces/user';
-import { addBudget, addIncome, addTransaction, debitTransaction, findUser, getUsers, insertUser, updateBudgetAmountSpent, updatebudgetampunt, updateIncomeAmount,  } from '../../backend/functions/users';
+import { addBudget, addIncome, addSavingsGoal, addTransaction, debitTransaction, findUser, getUsers, insertUser, updateBudgetAmountSpent, updatebudgetampunt, updateIncomeAmount,  } from '../../backend/functions/users';
 import { User } from '../classes/users';
 import { ITransaction } from '../interfaces/transactions';
+import { ISavingsGoal } from '../interfaces/savingsGoals';
 
 jest.mock('axios');
 
@@ -206,6 +207,28 @@ describe("User Routes", () => {
         (axios.put as jest.Mock).mockRejectedValue(new Error(errorMessage));
 
         await expect(updatebudgetampunt(user.username,  "groceries", 1500, 1000,)).rejects.toThrow('Error while updating user budget amount');
+    });
+
+    it("Should add a savings goal for the user", async () => {
+        const savingsGoal:ISavingsGoal = { title: "Emergency Fund", targetAmount: 5000, currentAmountSaved: 1000,};
+
+        user = {...user, savingsGoals:[{title: "Emergency Fund",targetAmount: 5000, currentAmountSaved: 1000 }]};
+        (axios.put as jest.Mock).mockResolvedValue({data:user});
+
+        const response = await addSavingsGoal(user.username, savingsGoal);
+
+        expect(axios.put).toHaveBeenCalledWith(`http://localhost:4321/user/savingsgoal/${user.username}`, savingsGoal);
+        expect(response).toEqual(user);
+
+    });
+
+    it("Should handle error when adding a savings goal", async () => {
+        const savingsGoal:ISavingsGoal = { title: "Emergency Fund", targetAmount: 5000, currentAmountSaved: 1000,};
+
+        const errorMessage = 'Error adding savings goal';
+        (axios.put as jest.Mock).mockRejectedValue(new Error(errorMessage));
+
+        await expect(addSavingsGoal(user.username, savingsGoal)).rejects.toThrow('Error while adding savings goal to the user');
     });
 
 
