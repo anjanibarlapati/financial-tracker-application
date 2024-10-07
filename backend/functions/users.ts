@@ -3,7 +3,8 @@ import { User } from "../../src/classes/users";
 
 export async function insertUser(user: User) {
     try {
-        await axios.post('http://localhost:4321/user', user);
+        const response = await axios.post('http://localhost:4321/user', user);
+        return response.data;
     } catch (error) {
         throw new Error('Failed to insert user');
     }
@@ -14,7 +15,7 @@ export async function getUsers() {
         const response = await axios.get('http://localhost:4321/users');
         return response.data;
     } catch (error) {
-        throw new Error('Failed to fetch users');
+        throw new Error('Failed to fetch all users');
     }
 }
 
@@ -25,6 +26,16 @@ export async function findUser(username: string, password: string) {
         });
         return response.data;
     } catch (error) {
-        throw new Error('Failed to find user');
+        throw new Error('Failed to find such user');
     }
 }
+
+export async function updateBudgetAmountSpent(username:string, category:string, amount:number){
+    try {
+        const response = await axios.put(`http://localhost:4321/user/budgetamountspent/${username}`, {category:category, amount:amount });
+        return response.data;
+    } catch (error) {
+        throw new Error('Failed to update budget amount spent for the user');
+    }
+}
+

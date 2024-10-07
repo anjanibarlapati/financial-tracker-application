@@ -161,7 +161,7 @@ export class User implements IUser {
         if (this.savingsGoals[index].currentAmountSaved + amount > this.savingsGoals[index].targetAmount) {
             throw new Error("Saving amount exceeding target amount");
         }
-        this.savingsGoals[index].currentAmountSaved = amount;
+        this.savingsGoals[index].currentAmountSaved += amount;
 
     }
 
