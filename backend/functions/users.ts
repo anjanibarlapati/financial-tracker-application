@@ -105,5 +105,15 @@ export async function addSavingsGoal(username:string, savingsGoal:ISavingsGoal){
     } 
 }
 
+    
+export async function addAmountToASavingsGoal(username:string, category:string, amount:number){
+    try {
+        const response = await axios.put(`http://localhost:4321/user/savingsgoalamount/${username}`,{category:category, amount:amount});
+        return response.data;
+    } catch (error) {
+        throw new Error('Error while adding amount to savings goal of the user');
+    } 
+}
+
 
 

@@ -149,4 +149,17 @@ userRouter.put('/user/savingsgoal/:username', async (req: Request, res: Response
   } catch (error) {
     res.status(500).json({ message: 'Error while inserting new savings goal to the user' });
   }
+});
+
+userRouter.put('/user/savingsgoalamount/:username', async (req: Request, res: Response) => {
+  let result;
+  try {
+    result = await User.updateOne(
+      { username: req.params.username, "savingsGoals.title": req.body.category },
+      { $inc: { "savingsGoals.$.currentAmountSaved": req.body.amount } }
+    );
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: 'Error while updating savings goal amount saved of the user' });
+  }
 })
