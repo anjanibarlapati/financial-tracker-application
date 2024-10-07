@@ -134,3 +134,19 @@ userRouter.put('/user/updatebudgetampunt/:username', async (req: Request, res: R
     res.status(500).json({ message: 'Error while updating budget amount for the user' });
   }
 })
+
+
+userRouter.put('/user/savingsgoal/:username', async (req: Request, res: Response) => {
+  let result;
+  try {
+    result = await User.updateOne(
+      { username: req.params.username },
+      {
+        $push: { savingsGoals: req.body },
+      }
+    );
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: 'Error while inserting new savings goal to the user' });
+  }
+})

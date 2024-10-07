@@ -1,6 +1,7 @@
 import axios from "axios";
 import { User } from "../../src/classes/users";
 import { ITransaction } from "../../src/interfaces/transactions";
+import { ISavingsGoal } from "../../src/interfaces/savingsGoals";
 
 export async function insertUser(user: User) {
     try {
@@ -92,6 +93,15 @@ export async function updatebudgetampunt(username:string, category:string, amoun
         return response.data;
     } catch (error) {
         throw new Error('Error while updating user budget amount');
+    } 
+}
+
+export async function addSavingsGoal(username:string, savingsGoal:ISavingsGoal){
+    try {
+        const response = await axios.put(`http://localhost:4321/user/savingsgoal/${username}`,savingsGoal);
+        return response.data;
+    } catch (error) {
+        throw new Error('Error while adding savings goal to the user');
     } 
 }
 
