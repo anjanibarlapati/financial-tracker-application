@@ -4,6 +4,8 @@ import bodyParser from 'body-parser';
 import {dbConnection} from './configuration/db';
 import { insertUsersData } from './insertions/insertions';
 import { userRouter } from './routes/users';
+import { users } from './data/users';
+
 
 const app = express();
 const port = 4321;
@@ -16,7 +18,7 @@ app.use(express.json());
 async function start() {
    try{
     await dbConnection();
-    await insertUsersData();
+    await insertUsersData(users);
    } 
    catch(Error) {
      console.log("Error while connectiong to DB or inserting");
