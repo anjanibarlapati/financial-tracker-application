@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { IUser } from '../interfaces/user';
-import { addIncome, addTransaction, findUser, getUsers, insertUser, updateBudgetAmountSpent,  } from '../../backend/functions/users';
+import { addIncome, addTransaction, findUser, getUsers, insertUser, updateBudgetAmountSpent, updateIncomeAmount,  } from '../../backend/functions/users';
 import { User } from '../classes/users';
 import { ITransaction } from '../interfaces/transactions';
 
@@ -125,6 +125,25 @@ describe("User Routes", () => {
         (axios.put as jest.Mock).mockRejectedValue(new Error(errorMessage));
    
         await expect(addIncome(user.username, "salary",1000)).rejects.toThrow('Error while adding income user');
+    });
+
+    it("Should update income amount for the user", async () => {
+        user = { ...user, income: [ {source:"salary", amount:1000}]};
+        const updatedUser = {...user, income: [ {source:"salary", amount:1200}] };
+        (axios.put as jest.Mock).mockResolvedValue({data: updatedUser});
+
+        const response = await updateIncomeAmount(user.username, "salary",200);
+
+        expect(axios.put).toHaveBeenCalledWith(`http://localhost:4321/user/incomeamount/${user.username}`, {category: "salary", amount: 200, });
+        expect(response).toEqual(updatedUser);
+
+    });
+
+    it("Should handle error when updating income amount", async () => {
+        const errorMessage = 'Error updating income amount';
+        (axios.put as jest.Mock).mockRejectedValue(new Error(errorMessage));
+
+        await expect(updateIncomeAmount(user.username, "salary",200)).rejects.toThrow('Error while updating income user');
     });
 
 
