@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { IUser } from '../interfaces/user';
-import { addBudget, addIncome, addSavingsGoal, addTransaction, debitTransaction, findUser, getUsers, insertUser, updateBudgetAmountSpent, updatebudgetampunt, updateIncomeAmount,  } from '../../backend/functions/users';
+import { addAmountToASavingsGoal, addBudget, addIncome, addSavingsGoal, addTransaction, debitTransaction, findUser, getUsers, insertUser, updateBudgetAmountSpent, updatebudgetampunt, updateIncomeAmount,  } from '../../backend/functions/users';
 import { User } from '../classes/users';
 import { ITransaction } from '../interfaces/transactions';
 import { ISavingsGoal } from '../interfaces/savingsGoals';
@@ -230,7 +230,27 @@ describe("User Routes", () => {
 
         await expect(addSavingsGoal(user.username, savingsGoal)).rejects.toThrow('Error while adding savings goal to the user');
     });
+    it("Should add amount to a savings goal for the user", async () => {
 
+        user = {...user, savingsGoals:[{title: "Emergency Fund",targetAmount: 5000, currentAmountSaved: 1000 }]};
+        const updatedUser:IUser = {...user, savingsGoals:[{title: "Emergency Fund",targetAmount: 5000, currentAmountSaved: 2000 }]};
 
+        (axios.put as jest.Mock).mockResolvedValue({data:updatedUser});
+
+       const response =  await addAmountToASavingsGoal(user.username, "Emergency Fund", 500);
+
+        expect(axios.put).toHaveBeenCalledWith(`http://localhost:4321/user/savingsgoalamount/${user.username}`, {
+            category: "Emergency Fund",
+            amount: 500,
+        });
+        expect(response).toEqual(updatedUser);
+    });
+
+    it("Should handle error when adding amount to a savings goal", async () => {
+        const errorMessage = 'Error adding amount to savings goal';
+        (axios.put as jest.Mock).mockRejectedValue(new Error(errorMessage));
+
+        await expect(addAmountToASavingsGoal(user.username, "Emergency Fund", 500)).rejects.toThrow('Error while adding amount to savings goal of the user');
+    });
 
 });
