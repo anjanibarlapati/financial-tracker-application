@@ -117,4 +117,20 @@ userRouter.put('/user/budget/:username', async (req: Request, res: Response) => 
   } catch (error) {
     res.status(500).json({ message: 'Error while inserting new budget to the user' });
   }
+});
+
+userRouter.put('/user/updatebudgetampunt/:username', async (req: Request, res: Response) => {
+  let result;
+  try {
+    result = await User.updateOne(
+      { username: req.params.username, "budgets.category": req.body.category },
+      {
+        $set: { totalBudget: req.body.totalBudget },
+        $inc: { "budgets.$.amount": req.body.amount }
+      }
+    );
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: 'Error while updating budget amount for the user' });
+  }
 })
