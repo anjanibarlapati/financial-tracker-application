@@ -55,3 +55,18 @@ userRouter.put('/user/transaction/:username', async (req: Request, res: Response
   }
 })
 
+userRouter.put('/user/income/:username', async (req: Request, res: Response) => {
+  let result;
+  try {
+    await User.updateOne(
+      { username: req.params.username },
+      {
+        $push: { income: { source: req.body.category, amount: req.body.amount } },
+        $inc: { availableBalance: req.body.amount, totalIncome: req.body.amount }
+      }
+    );
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: 'Error while addding income user' });
+  }
+})
