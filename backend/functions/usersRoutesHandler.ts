@@ -42,7 +42,7 @@ export const updateBudgetAmountSpent = async (req: Request, res: Response) => {
 
 export const addTransaction = async (req: Request, res: Response) => {
     try {
-        const user = await User.updateOne(
+        const user = await User.findOneAndUpdate(
             { username: req.params.username },
             { $push: { transactions: req.body } }
         );
@@ -54,7 +54,7 @@ export const addTransaction = async (req: Request, res: Response) => {
 
 export const addIncome = async (req: Request, res: Response) => {
     try {
-        await User.updateOne(
+        await User.findOneAndUpdate(
             { username: req.params.username },
             {
                 $push: { income: { source: req.body.category, amount: req.body.amount } },
@@ -69,27 +69,27 @@ export const addIncome = async (req: Request, res: Response) => {
 
 export const updateIncomeAmount = async (req: Request, res: Response) => {
     try {
-        const result = await User.updateOne(
+        const user = await User.findOneAndUpdate(
             { username: req.params.username, 'income.source': req.body.category },
             {
                 $inc: { 'income.$.amount': req.body.amount, availableBalance: req.body.amount, totalIncome: req.body.amount }
             }
         );
-        res.json(result);
+        res.json(user);
     } catch (error) {
         res.status(500).json({ message: 'Error while updating income user' });
     }
 };
 
-export const debitTransaction = async (req: Request, res: Response) => {
+export const debitAmount = async (req: Request, res: Response) => {
     try {
-        const result = await User.updateOne(
+        const user = await User.findOneAndUpdate(
             { username: req.params.username },
             {
                 $inc: { availableBalance: -req.body.amount }
             }
         );
-        res.json(result);
+        res.json(user);
     } catch (error) {
         res.status(500).json({ message: 'Error while updating user' });
     }
@@ -97,7 +97,7 @@ export const debitTransaction = async (req: Request, res: Response) => {
 
 export const addBudget = async (req: Request, res: Response) => {
     try {
-        const result = await User.updateOne(
+        const result = await User.findOneAndUpdate(
             { username: req.params.username },
             {
                 $push: { budgets: { category: req.body.category, amount: req.body.amount, amountSpent: 0 } },
@@ -112,7 +112,7 @@ export const addBudget = async (req: Request, res: Response) => {
 
 export const updateBudgetAmount = async (req: Request, res: Response) => {
     try {
-        const result = await User.updateOne(
+        const result = await User.findOneAndUpdate(
             { username: req.params.username, "budgets.category": req.body.category },
             {
                 $set: { totalBudget: req.body.totalBudget },
@@ -127,7 +127,7 @@ export const updateBudgetAmount = async (req: Request, res: Response) => {
 
 export const addSavingsGoal = async (req: Request, res: Response) => {
     try {
-        const result = await User.updateOne(
+        const result = await User.findOneAndUpdate(
             { username: req.params.username },
             {
                 $push: { savingsGoals: req.body },
@@ -141,7 +141,7 @@ export const addSavingsGoal = async (req: Request, res: Response) => {
 
 export const updateSavingsGoalAmount = async (req: Request, res: Response) => {
     try {
-        const result = await User.updateOne(
+        const result = await User.findOneAndUpdate(
             { username: req.params.username, "savingsGoals.title": req.body.category },
             { $inc: { "savingsGoals.$.currentAmountSaved": req.body.amount } }
         );

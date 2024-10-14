@@ -1,6 +1,6 @@
 
 import { Request, Response } from 'express';
-import { addBudget, addIncome, addSavingsGoal, addTransaction, createUser, debitTransaction, getAllUsers, getUser, updateBudgetAmount, updateBudgetAmountSpent, updateIncomeAmount, updateSavingsGoalAmount } from '../../backend/functions/usersRoutesHandler';
+import { addBudget, addIncome, addSavingsGoal, addTransaction, createUser, debitAmount, getAllUsers, getUser, updateBudgetAmount, updateBudgetAmountSpent, updateIncomeAmount, updateSavingsGoalAmount } from '../../backend/functions/usersRoutesHandler';
 import { User } from '../../backend/models/users';
 import { IUser } from '../interfaces/user';
 
@@ -37,13 +37,14 @@ describe('User Controller', () => {
 
     describe('createUser', () => {
         it('should create a user and return it', async () => {
-            const mockUser = { id: 1, ...req.body };
-            (User.create as jest.Mock).mockResolvedValue(mockUser); 
+            req.body = user;
+            const mockedUser = {id:1, ...user};
+            (User.create as jest.Mock).mockResolvedValue(mockedUser); 
     
             await createUser(req as Request, res as Response);
     
             expect(User.create).toHaveBeenCalledWith(req.body);
-            expect(res.json).toHaveBeenCalledWith(mockUser);
+            expect(res.json).toHaveBeenCalledWith(mockedUser);
             expect(res.status).not.toHaveBeenCalled();
         });
     
@@ -60,7 +61,6 @@ describe('User Controller', () => {
 
     describe('getAllUsers', () => {
         it('should return all users', async () => {
-            req.body = {username: "a", password: "a123"};
             const mockUsers = [user];
             (User.find as jest.Mock).mockResolvedValue(mockUsers);
 
@@ -83,13 +83,13 @@ describe('User Controller', () => {
     describe('getUser', () => {
         it('should return a user by username and password', async () => {
             req.query = { username: 'abc', password: 'abc' };
-            const mockUser = user;
-            (User.findOne as jest.Mock).mockResolvedValue(mockUser);
+            const mockedUser = user;
+            (User.findOne as jest.Mock).mockResolvedValue(mockedUser);
 
             await getUser(req as Request, res as Response);
 
             expect(User.findOne).toHaveBeenCalledWith({ username: req.query.username, password: req.query.password });
-            expect(res.json).toHaveBeenCalledWith(mockUser);
+            expect(res.json).toHaveBeenCalledWith(mockedUser);
         });
 
         it('should handle errors if fetching a user fails', async () => {
@@ -106,8 +106,8 @@ describe('User Controller', () => {
         it('should update budget amount spent', async () => {
             req.params = { username: 'abc' };
             req.body = { category: 'groceries', amount: 50 };
-            const mockResult = { modifiedCount: 1 };
-            (User.updateOne as jest.Mock).mockResolvedValue(mockResult);
+            const mockedResult = { modifiedCount: 1 };
+            (User.updateOne as jest.Mock).mockResolvedValue(mockedResult);
 
             await updateBudgetAmountSpent(req as Request, res as Response);
 
@@ -115,11 +115,11 @@ describe('User Controller', () => {
                 { username: req.params.username, "budgets.category": req.body.category },
                 { $inc: { "budgets.$.amountSpent": req.body.amount } }
             );
-            expect(res.json).toHaveBeenCalledWith(mockResult);
+            expect(res.json).toHaveBeenCalledWith(mockedResult);
         });
 
         it('should handle errors', async () => {
-            (User.updateOne as jest.Mock).mockRejectedValue(new Error('Database error'));
+            (User.updateOne as jest.Mock).mockRejectedValue(new Error('Error while updating budget amount spent for the user'));
 
             await updateBudgetAmountSpent(req as Request, res as Response);
 
@@ -131,21 +131,21 @@ describe('User Controller', () => {
     describe('addTransaction', () => {
         it('should add a transaction', async () => {
             req.params = { username: 'user1' };
-            req.body = { amount: 100 };
-            const mockResult = { modifiedCount: 1 };
-            (User.updateOne as jest.Mock).mockResolvedValue(mockResult);
+            req.body = {id:1, type: "credit", amount:5000, category:"Others", date:new Date() };
+            const mockedResult = {...user, transactions:{id:1, type: "credit", amount:5000, category:"Others", date:"2024-09-05T00:00:00.000Z"}};
+            (User.findOneAndUpdate as jest.Mock).mockResolvedValue(mockedResult);
 
             await addTransaction(req as Request, res as Response);
 
-            expect(User.updateOne).toHaveBeenCalledWith(
+            expect(User.findOneAndUpdate).toHaveBeenCalledWith(
                 { username: req.params.username },
                 { $push: { transactions: req.body } }
             );
-            expect(res.json).toHaveBeenCalledWith(mockResult);
+            expect(res.json).toHaveBeenCalledWith(mockedResult);
         });
 
         it('should handle errors', async () => {
-            (User.updateOne as jest.Mock).mockRejectedValue(new Error('Database error'));
+            (User.findOneAndUpdate as jest.Mock).mockRejectedValue(new Error('Error while inserting new transaction for the user'));
 
             await addTransaction(req as Request, res as Response);
 
@@ -158,12 +158,12 @@ describe('User Controller', () => {
         it('should add income', async () => {
             req.params = { username: 'user1' };
             req.body = { category: 'salary', amount: 2000 };
-            const mockResult = { modifiedCount: 1 };
-            (User.updateOne as jest.Mock).mockResolvedValue(mockResult);
+            const mockedResult = {message: "Income added successfully"};
+            (User.findOneAndUpdate as jest.Mock).mockResolvedValue(mockedResult);
 
             await addIncome(req as Request, res as Response);
 
-            expect(User.updateOne).toHaveBeenCalledWith(
+            expect(User.findOneAndUpdate).toHaveBeenCalledWith(
                 { username: req.params.username },
                 {
                     $push: { income: { source: req.body.category, amount: req.body.amount } },
@@ -174,7 +174,7 @@ describe('User Controller', () => {
         });
 
         it('should handle errors', async () => {
-            (User.updateOne as jest.Mock).mockRejectedValue(new Error('Database error'));
+            (User.findOneAndUpdate as jest.Mock).mockRejectedValue(new Error('Error while adding income to user'));
 
             await addIncome(req as Request, res as Response);
 
@@ -187,22 +187,22 @@ describe('User Controller', () => {
         it('should update income amount', async () => {
             req.params = { username: 'user1' };
             req.body = { category: 'salary', amount: 500 };
-            const mockResult = { modifiedCount: 1 };
-            (User.updateOne as jest.Mock).mockResolvedValue(mockResult);
+            const mockedResult = { ...user, income: {source: "salary", amount: 2500}};
+            (User.findOneAndUpdate as jest.Mock).mockResolvedValue(mockedResult);
 
             await updateIncomeAmount(req as Request, res as Response);
 
-            expect(User.updateOne).toHaveBeenCalledWith(
+            expect(User.findOneAndUpdate).toHaveBeenCalledWith(
                 { username: req.params.username, 'income.source': req.body.category },
                 {
                     $inc: { 'income.$.amount': req.body.amount, availableBalance: req.body.amount, totalIncome: req.body.amount }
                 }
             );
-            expect(res.json).toHaveBeenCalledWith(mockResult);
+            expect(res.json).toHaveBeenCalledWith(mockedResult);
         });
 
         it('should handle errors', async () => {
-            (User.updateOne as jest.Mock).mockRejectedValue(new Error('Database error'));
+            (User.findOneAndUpdate as jest.Mock).mockRejectedValue(new Error('Error while updating income user'));
 
             await updateIncomeAmount(req as Request, res as Response);
 
@@ -215,12 +215,12 @@ describe('User Controller', () => {
         it('should debit an amount from user balance', async () => {
             req.params = { username: 'user1' };
             req.body = { amount: 100 };
-            const mockResult = { modifiedCount: 1 };
-            (User.updateOne as jest.Mock).mockResolvedValue(mockResult);
+            const mockResult = { ...user, availableBalance: 4400 };
+            (User.findOneAndUpdate as jest.Mock).mockResolvedValue(mockResult);
 
-            await debitTransaction(req as Request, res as Response);
+            await debitAmount(req as Request, res as Response);
 
-            expect(User.updateOne).toHaveBeenCalledWith(
+            expect(User.findOneAndUpdate).toHaveBeenCalledWith(
                 { username: req.params.username },
                 { $inc: { availableBalance: -req.body.amount } }
             );
@@ -228,9 +228,9 @@ describe('User Controller', () => {
         });
 
         it('should handle errors', async () => {
-            (User.updateOne as jest.Mock).mockRejectedValue(new Error('Database error'));
+            (User.findOneAndUpdate as jest.Mock).mockRejectedValue(new Error('Error while updating user'));
 
-            await debitTransaction(req as Request, res as Response);
+            await debitAmount(req as Request, res as Response);
 
             expect(res.status).toHaveBeenCalledWith(500);
             expect(res.json).toHaveBeenCalledWith({ message: 'Error while updating user' });
@@ -241,12 +241,12 @@ describe('User Controller', () => {
         it('should add a budget', async () => {
             req.params = { username: 'user1' };
             req.body = { category: 'food', amount: 300 };
-            const mockResult = { modifiedCount: 1 };
-            (User.updateOne as jest.Mock).mockResolvedValue(mockResult);
+            const mockResult = { ...user, budgets:{category: 'food', amount: 300} };
+            (User.findOneAndUpdate as jest.Mock).mockResolvedValue(mockResult);
 
             await addBudget(req as Request, res as Response);
 
-            expect(User.updateOne).toHaveBeenCalledWith(
+            expect(User.findOneAndUpdate).toHaveBeenCalledWith(
                 { username: req.params.username },
                 {
                     $push: { budgets: { category: req.body.category, amount: req.body.amount, amountSpent: 0 } },
@@ -257,7 +257,7 @@ describe('User Controller', () => {
         });
 
         it('should handle errors', async () => {
-            (User.updateOne as jest.Mock).mockRejectedValue(new Error('Database error'));
+            (User.findOneAndUpdate as jest.Mock).mockRejectedValue(new Error('Error while inserting new budget to the user'));
 
             await addBudget(req as Request, res as Response);
 
@@ -269,13 +269,13 @@ describe('User Controller', () => {
     describe('updateBudgetAmount', () => {
         it('should update budget amount', async () => {
             req.params = { username: 'user1' };
-            req.body = { category: 'food', totalBudget: 600, amount: 200 };
-            const mockResult = { modifiedCount: 1 };
-            (User.updateOne as jest.Mock).mockResolvedValue(mockResult);
+            req.body = { category: 'food', totalBudget: 200, amount: 200 };
+            const mockResult = { ...user, budgets:{category: 'food', amount: 200, amountSpent:0}, totalBudget:200};
+            (User.findOneAndUpdate as jest.Mock).mockResolvedValue(mockResult);
 
             await updateBudgetAmount(req as Request, res as Response);
 
-            expect(User.updateOne).toHaveBeenCalledWith(
+            expect(User.findOneAndUpdate).toHaveBeenCalledWith(
                 { username: req.params.username, "budgets.category": req.body.category },
                 {
                     $set: { totalBudget: req.body.totalBudget },
@@ -286,7 +286,7 @@ describe('User Controller', () => {
         });
 
         it('should handle errors if updating budget amount for the user fails', async () => {
-            (User.updateOne as jest.Mock).mockRejectedValue(new Error('Database error'));
+            (User.findOneAndUpdate as jest.Mock).mockRejectedValue(new Error('Error while updating budget amount for the user'));
 
             await updateBudgetAmount(req as Request, res as Response);
 
@@ -299,12 +299,12 @@ describe('User Controller', () => {
         it('should add a savings goal', async () => {
             req.params = { username: 'user1' };
             req.body = { title: 'vacation', amount: 1000 };
-            const mockResult = { modifiedCount: 1 };
-            (User.updateOne as jest.Mock).mockResolvedValue(mockResult);
+            const mockResult = { ...user, savingsGoals: { title: 'vacation', amount: 1000}};
+            (User.findOneAndUpdate as jest.Mock).mockResolvedValue(mockResult);
 
             await addSavingsGoal(req as Request, res as Response);
 
-            expect(User.updateOne).toHaveBeenCalledWith(
+            expect(User.findOneAndUpdate).toHaveBeenCalledWith(
                 { username: req.params.username },
                 {
                     $push: { savingsGoals: req.body },
@@ -314,7 +314,7 @@ describe('User Controller', () => {
         });
 
         it('should handle errors', async () => {
-            (User.updateOne as jest.Mock).mockRejectedValue(new Error('Database error'));
+            (User.findOneAndUpdate as jest.Mock).mockRejectedValue(new Error('Error while inserting new savings goal to the user'));
 
             await addSavingsGoal(req as Request, res as Response);
 
@@ -327,12 +327,12 @@ describe('User Controller', () => {
         it('should update savings goal amount', async () => {
             req.params = { username: 'user1' };
             req.body = { category: 'vacation', amount: 300 };
-            const mockResult = { modifiedCount: 1 };
-            (User.updateOne as jest.Mock).mockResolvedValue(mockResult);
+            const mockResult = { ...user, savingsGoals: { title: 'vacation', amount: 1000, currentAmountSaved:300}};
+            (User.findOneAndUpdate as jest.Mock).mockResolvedValue(mockResult);
 
             await updateSavingsGoalAmount(req as Request, res as Response);
 
-            expect(User.updateOne).toHaveBeenCalledWith(
+            expect(User.findOneAndUpdate).toHaveBeenCalledWith(
                 { username: req.params.username, "savingsGoals.title": req.body.category },
                 { $inc: { "savingsGoals.$.currentAmountSaved": req.body.amount } }
             );
@@ -340,7 +340,7 @@ describe('User Controller', () => {
         });
 
         it('should handle errors', async () => {
-            (User.updateOne as jest.Mock).mockRejectedValue(new Error('Database error'));
+            (User.findOneAndUpdate as jest.Mock).mockRejectedValue(new Error('Error while updating savings goal amount saved of the user'));
 
             await updateSavingsGoalAmount(req as Request, res as Response);
 

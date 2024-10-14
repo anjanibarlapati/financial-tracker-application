@@ -1,7 +1,7 @@
 import express from 'express';
 import {
     createUser, getAllUsers, getUser, updateBudgetAmountSpent, addTransaction, addIncome, updateIncomeAmount, 
-    debitTransaction, addBudget, updateBudgetAmount, addSavingsGoal, updateSavingsGoalAmount
+    debitAmount, addBudget, updateBudgetAmount, addSavingsGoal, updateSavingsGoalAmount
 } from '../functions/usersRoutesHandler';
 
 export const userRouter = express.Router();
@@ -20,7 +20,7 @@ userRouter.put('/user/income/:username', addIncome);
 
 userRouter.put('/user/incomeamount/:username', updateIncomeAmount);
 
-userRouter.put('/user/transaction/debit/:username', debitTransaction);
+userRouter.put('/user/transaction/debit/:username', debitAmount);
 
 userRouter.put('/user/budget/:username', addBudget);
 
