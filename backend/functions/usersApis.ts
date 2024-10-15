@@ -96,7 +96,7 @@ export async function addBudget(username:string, category:string, amount:number)
     } 
 }
 
-export async function updatebudgetamount(username:string, category:string, amount:number, totalBudget:number){
+export async function updateBudgetAmount(username:string, category:string, amount:number, totalBudget:number){
     try {
         const response = await axios.put(`http://localhost:4321/user/updatebudgetamount/${username}`,{category:category, amount:amount, totalBudget:totalBudget});
         return response.data;

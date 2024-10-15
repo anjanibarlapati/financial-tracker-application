@@ -49,9 +49,14 @@ describe("Transactions Functionality",()=>{
     });
 
     test("Should debit given amount when all correct details are provided", async ()=>{
+        await user.setBudget("Groceries", 2000);
 
         const txn:ITransaction = {id:user.transactions.length+1, type: "debit", amount:1000, category:"Groceries", date:new Date()}
-        await user.transaction(txn);
+        await user.transaction(txn);  
+
+        const budget = user.budgets.find(b=>b.category=== txn.category);
+
+        expect(budget?.amountSpent).toBe(1000);
         expect(user.availableBalance).toBe(19000);   
     });
 
@@ -70,12 +75,12 @@ describe("Transactions Functionality",()=>{
         await expect(user.transaction( txn2)).rejects.toThrow("Transaction category should be non-empty");
     });
 
-    // test("should throw an error when budget is insufficient for an existing category", async () => {
+    test("should throw an error when budget is insufficient for an existing category", async () => {
 
-    //     user.setBudget("Groceries", 1000);
-    //     const txn: ITransaction = { id: user.transactions.length + 1, type: "debit", amount: 2000, category: "Groceries", date: new Date() };
-    //     await expect(user.transaction(txn)).rejects.toThrow("Insufficient budget for given category");
-    // });
+        await user.setBudget("Rent", 1000);
+        const txn: ITransaction = { id: user.transactions.length + 1, type: "debit", amount: 2000, category: "Rent", date: new Date() };
+        await expect(user.transaction(txn)).rejects.toThrow("Insufficient budget for given category");
+    });
 
     test("should allow a debit transaction when the budget category does not exist", async () => {
         const txn: ITransaction = { id: user.transactions.length + 1, type: "debit", amount: 500, category: "Travel", date: new Date() };

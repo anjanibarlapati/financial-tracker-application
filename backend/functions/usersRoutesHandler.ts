@@ -124,8 +124,7 @@ export const updateBudgetAmount = async (req: Request, res: Response) => {
         const result = await User.findOneAndUpdate(
             { username: req.params.username, "budgets.category": req.body.category },
             {
-                $set: { totalBudget: req.body.totalBudget },
-                $inc: { "budgets.$.amount": req.body.amount }
+                $set: { totalBudget: req.body.totalBudget, "budgets.$.amount": req.body.amount}
             }
         );
         res.json(result);

@@ -1,4 +1,4 @@
-import { addIncome, addTransaction, debitAmount, updatebudgetamount, updateBudgetAmountSpent, updateIncomeAmount } from "../../backend/functions/usersApis";
+import { addBudget, addIncome, addTransaction, debitAmount, updateBudgetAmount, updateBudgetAmountSpent, updateIncomeAmount } from "../../backend/functions/usersApis";
 import { IBudget } from "../interfaces/budget";
 import { IFinancialReport, IFinancialReportBudget, IFinancialReportSavingsGoal } from "../interfaces/financialReport";
 import { IIncome } from "../interfaces/income";
@@ -51,7 +51,6 @@ export class User implements IUser {
             return;
         }
         if (budget.amount - (budget.amountSpent + txn.amount) < 0) {
-            console.log("Insufficient budget for given category");
             throw new Error("Insufficient budget for given category");
         }
         this.budgets.forEach(async (b) => {
@@ -66,8 +65,7 @@ export class User implements IUser {
 
         this.isValidTransaction(txn);
 
-        this.transactions.push(txn);
-        await addTransaction(this.username, txn);
+
 
         if (txn.type === 'credit') {
             this.availableBalance += txn.amount;
@@ -87,9 +85,11 @@ export class User implements IUser {
             this.availableBalance -= txn.amount;
             await debitAmount(this.username, txn.amount);
         }
+        this.transactions.push(txn);
+        await addTransaction(this.username, txn);
     }
 
-    setBudget(category: string, amount: number) {
+    async setBudget(category: string, amount: number) {
 
         const isBudgetExist = this.budgets.some(b => b.category === category);
 
@@ -105,9 +105,11 @@ export class User implements IUser {
         }
         this.budgets.push({ category: category, amount: amount, amountSpent: 0 });
         this.totalBudget += amount;
+        await addBudget(this.username, category, amount)
+
     }
 
-    updateBudgetAmount(category: string, amount: number) {
+    async updateBudgetAmount(category: string, amount: number) {
 
         const budgetIndex = this.budgets.findIndex(b => b.category === category);
 
@@ -125,6 +127,8 @@ export class User implements IUser {
         const currentBudget = this.budgets[budgetIndex].amount;
         this.budgets[budgetIndex].amount = amount;
         this.totalBudget = this.totalBudget - currentBudget + amount;
+        await updateBudgetAmount(this.username, category, amount, this.totalBudget);
+
     }
 
     checkBudgetSpent(category: string) {

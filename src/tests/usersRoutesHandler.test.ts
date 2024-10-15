@@ -300,8 +300,7 @@ describe('User Controller', () => {
             expect(User.findOneAndUpdate).toHaveBeenCalledWith(
                 { username: req.params.username, "budgets.category": req.body.category },
                 {
-                    $set: { totalBudget: req.body.totalBudget },
-                    $inc: { "budgets.$.amount": req.body.amount }
+                    $set: { totalBudget: req.body.totalBudget, "budgets.$.amount": req.body.amount }
                 }
             );
             expect(res.json).toHaveBeenCalledWith(mockResult);
