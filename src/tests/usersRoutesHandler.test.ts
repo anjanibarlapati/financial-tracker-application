@@ -1,6 +1,6 @@
 
 import { Request, Response } from 'express';
-import { addBudget, addIncome, addSavingsGoal, addTransaction, createUser, debitAmount, getAllUsers, getUser, updateBudgetAmount, updateBudgetAmountSpent, updateIncomeAmount, updateSavingsGoalAmount } from '../../backend/functions/usersRoutesHandler';
+import { addBudget, addIncome, addSavingsGoal, addTransaction, createUser, isExistingUser, debitAmount, getAllUsers, getUser, updateBudgetAmount, updateBudgetAmountSpent, updateIncomeAmount, updateSavingsGoalAmount } from '../../backend/functions/usersRoutesHandler';
 import { User } from '../../backend/models/users';
 import { IUser } from '../interfaces/user';
 
@@ -96,6 +96,28 @@ describe('User Controller', () => {
             (User.findOne as jest.Mock).mockRejectedValue(new Error('Error while getting user'));
 
             await getUser(req as Request, res as Response);
+
+            expect(res.status).toHaveBeenCalledWith(500);
+            expect(res.json).toHaveBeenCalledWith({ message: 'Error while getting user' });
+        });
+    });
+
+    describe('isExistingUser', () => {
+        it('should return a user if given username already exist', async () => {
+            req.params = { username: 'abc' };
+            const mockedUser = user;
+            (User.findOne as jest.Mock).mockResolvedValue(mockedUser);
+
+            await isExistingUser(req as Request, res as Response);
+
+            expect(User.findOne).toHaveBeenCalledWith({ username: req.params.username });
+            expect(res.json).toHaveBeenCalledWith(mockedUser);
+        });
+
+        it('should handle errors if fetching a user fails', async () => {
+            (User.findOne as jest.Mock).mockRejectedValue(new Error('Error while getting user'));
+
+            await isExistingUser(req as Request, res as Response);
 
             expect(res.status).toHaveBeenCalledWith(500);
             expect(res.json).toHaveBeenCalledWith({ message: 'Error while getting user' });
