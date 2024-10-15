@@ -12,11 +12,7 @@ describe("User Authentication Functionality",()=>{
     beforeAll(async () => {
         server = await start();
     });
-
-    afterEach(async () => {
-
-    });
-
+    
     afterAll(async () => {
         await User.deleteMany(); 
         await mongoose.connection.close();

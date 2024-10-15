@@ -1,3 +1,4 @@
+import { addIncome, addTransaction, debitAmount, updatebudgetamount, updateBudgetAmountSpent, updateIncomeAmount } from "../../backend/functions/usersApis";
 import { IBudget } from "../interfaces/budget";
 import { IFinancialReport, IFinancialReportBudget, IFinancialReportSavingsGoal } from "../interfaces/financialReport";
 import { IIncome } from "../interfaces/income";
@@ -42,7 +43,7 @@ export class User implements IUser {
 
     }
 
-    updateBudgetAmountSpent(txn: ITransaction) {
+    async updateBudgetAmountSpent(txn: ITransaction) {
 
         const budget = this.budgets.find((b) => b.category === txn.category);
 
@@ -53,33 +54,38 @@ export class User implements IUser {
             console.log("Insufficient budget for given category");
             throw new Error("Insufficient budget for given category");
         }
-        this.budgets.forEach((b) => {
+        this.budgets.forEach(async (b) => {
             if (b.category === txn.category) {
+                await updateBudgetAmountSpent(this.username, txn.category, txn.amount);
                 return b.amountSpent += txn.amount;
             }
         })
     }
 
-    transaction(txn: ITransaction) {
+    async transaction(txn: ITransaction) {
 
         this.isValidTransaction(txn);
 
         this.transactions.push(txn);
+        await addTransaction(this.username, txn);
 
         if (txn.type === 'credit') {
             this.availableBalance += txn.amount;
+            this.totalIncome += txn.amount;
             const index = this.income.findIndex(i => i.source === txn.category);
             if (index === -1) {
                 this.income.push({ source: txn.category, amount: txn.amount });
+                await addIncome(this.username, txn.category, txn.amount);
             }
             else {
                 this.income[index].amount += txn.amount;
+                await updateIncomeAmount(this.username, txn.category, txn.amount);
             }
-            this.totalIncome += txn.amount;
         }
         else {
-            this.updateBudgetAmountSpent(txn);
+            await this.updateBudgetAmountSpent(txn);
             this.availableBalance -= txn.amount;
+            await debitAmount(this.username, txn.amount);
         }
     }
 

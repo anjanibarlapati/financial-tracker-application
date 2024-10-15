@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { IUser } from '../interfaces/user';
-import { addAmountToASavingsGoal, addBudget, addIncome, addSavingsGoal, addTransaction, debitTransaction, findUser, getUsers, insertUser, updateBudgetAmountSpent, updatebudgetamount, updateIncomeAmount, isExistingUser,  } from '../../backend/functions/usersApis';
+import { addAmountToASavingsGoal, addBudget, addIncome, addSavingsGoal, addTransaction, debitAmount, findUser, getUsers, insertUser, updateBudgetAmountSpent, updatebudgetamount, updateIncomeAmount, isExistingUser,  } from '../../backend/functions/usersApis';
 import { User } from '../classes/users';
 import { ITransaction } from '../interfaces/transactions';
 import { ISavingsGoal } from '../interfaces/savingsGoals';
@@ -164,7 +164,7 @@ describe("User Routes", () => {
 
         (axios.put as jest.Mock).mockResolvedValue({data: updatedUser});
 
-        const response = await debitTransaction(user.username, 100);
+        const response = await debitAmount(user.username, 100);
 
         expect(axios.put).toHaveBeenCalledWith(`http://localhost:4321/user/transaction/debit/${user.username}`, {amount: 100 });
         expect(response).toEqual(updatedUser);
@@ -175,7 +175,7 @@ describe("User Routes", () => {
 
         (axios.put as jest.Mock).mockRejectedValue(new Error("Error while updating user"));
 
-        await expect(debitTransaction(user.username, 100)).rejects.toThrow('Error while updating user');
+        await expect(debitAmount(user.username, 100)).rejects.toThrow('Error while updating user');
     });
 
 
