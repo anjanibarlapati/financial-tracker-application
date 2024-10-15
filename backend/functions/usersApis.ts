@@ -32,6 +32,15 @@ export async function findUser(username: string, password: string) {
     }
 }
 
+export async function isExistingUser(username: string) {
+    try {
+        const response = await axios.get(`http://localhost:4321/user/${username}`);
+        return response.data;
+    } catch (error) {
+        throw new Error('Failed to find such user');
+    }
+}
+
 export async function updateBudgetAmountSpent(username:string, category:string, amount:number){
     try {
         const response = await axios.put(`http://localhost:4321/user/budgetamountspent/${username}`, {category:category, amount:amount });
@@ -89,7 +98,7 @@ export async function addBudget(username:string, category:string, amount:number)
 
 export async function updatebudgetamount(username:string, category:string, amount:number, totalBudget:number){
     try {
-        const response = await axios.put(`http://localhost:4321/user/updatebudgetampunt/${username}`,{category:category, amount:amount, totalBudget:totalBudget});
+        const response = await axios.put(`http://localhost:4321/user/updatebudgetamount/${username}`,{category:category, amount:amount, totalBudget:totalBudget});
         return response.data;
     } catch (error) {
         throw new Error('Error while updating user budget amount');
