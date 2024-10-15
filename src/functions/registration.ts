@@ -1,7 +1,9 @@
+import { getUsers, insertUser, isExistingUser } from "../../backend/functions/usersApis";
+import { getUser } from "../../backend/functions/usersRoutesHandler";
 import { User } from "../classes/users";
 import { users } from "../data/users";
 
-export function register(...credentials:string[]){
+export async function register(...credentials:string[]){
 
     const [username, password] = credentials;
 
@@ -13,12 +15,12 @@ export function register(...credentials:string[]){
         throw new Error('Username and password should be non-empty');
     }
 
-    const existingUser = users.find(user => user.username === username);
+    const existingUser = await isExistingUser(username);
     if (existingUser) {
         throw new Error('Username is already exist');
     };
     
     const user = new User(username, password);
-    users.push(user);
-    return user;
+    const newUser = await insertUser(user);
+    return newUser;
 }
