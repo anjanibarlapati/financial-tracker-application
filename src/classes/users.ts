@@ -1,4 +1,4 @@
-import { addBudget, addIncome, addTransaction, debitAmount, updateBudgetAmount, updateBudgetAmountSpent, updateIncomeAmount } from "../../backend/functions/usersApis";
+import { addAmountToASavingsGoal, addBudget, addIncome, addSavingsGoal, addTransaction, debitAmount, updateBudgetAmount, updateBudgetAmountSpent, updateIncomeAmount } from "../../backend/functions/usersApis";
 import { IBudget } from "../interfaces/budget";
 import { IFinancialReport, IFinancialReportBudget, IFinancialReportSavingsGoal } from "../interfaces/financialReport";
 import { IIncome } from "../interfaces/income";
@@ -140,7 +140,7 @@ export class User implements IUser {
         return this.budgets[budgetIndex].amountSpent;
     }
 
-    addSavingsGoal(savingsGoal: ISavingsGoal) {
+    async addSavingsGoal(savingsGoal: ISavingsGoal) {
 
         if (savingsGoal.targetAmount <= 0) {
             throw new Error("Savings goal target amount should be greater than zero");
@@ -156,10 +156,11 @@ export class User implements IUser {
         }
 
         this.savingsGoals.push(savingsGoal);
+        await addSavingsGoal(this.username, savingsGoal);
 
     }
 
-    addAmountToASavingsGoal(title: string, amount: number) {
+    async addAmountToASavingsGoal(title: string, amount: number) {
 
         if (amount <= 0) {
             throw new Error("Updated current saved amount should be greater than zero")
@@ -172,6 +173,13 @@ export class User implements IUser {
             throw new Error("Saving amount exceeding target amount");
         }
         this.savingsGoals[index].currentAmountSaved += amount;
+        await addAmountToASavingsGoal(this.username, title, amount);
+        
+        const progress = this.checkSavingsGoalProgress(title);
+        
+        if (progress >= 90) {
+            console.log(`You have reached ${progress}% of the target amount`);
+        }
 
     }
 
@@ -185,9 +193,6 @@ export class User implements IUser {
         const amountSaved = this.savingsGoals[index].currentAmountSaved;
         const progress: number = Number(((amountSaved / targetAmount) * 100).toFixed(0));
 
-        if (progress >= 90) {
-            console.log(`You have reached ${progress}% of the target amount`);
-        }
         return progress;
 
     }

@@ -347,14 +347,14 @@ describe('User Controller', () => {
     describe('updateSavingsGoalAmount', () => {
         it('should update savings goal amount', async () => {
             req.params = { username: 'user1' };
-            req.body = { category: 'vacation', amount: 300 };
+            req.body = { title: 'vacation', amount: 300 };
             const mockResult = { ...user, savingsGoals: { title: 'vacation', amount: 1000, currentAmountSaved:300}};
             (User.findOneAndUpdate as jest.Mock).mockResolvedValue(mockResult);
 
             await updateSavingsGoalAmount(req as Request, res as Response);
 
             expect(User.findOneAndUpdate).toHaveBeenCalledWith(
-                { username: req.params.username, "savingsGoals.title": req.body.category },
+                { username: req.params.username, "savingsGoals.title": req.body.title },
                 { $inc: { "savingsGoals.$.currentAmountSaved": req.body.amount } }
             );
             expect(res.json).toHaveBeenCalledWith(mockResult);

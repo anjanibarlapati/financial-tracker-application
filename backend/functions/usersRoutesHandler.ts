@@ -150,7 +150,7 @@ export const addSavingsGoal = async (req: Request, res: Response) => {
 export const updateSavingsGoalAmount = async (req: Request, res: Response) => {
     try {
         const result = await User.findOneAndUpdate(
-            { username: req.params.username, "savingsGoals.title": req.body.category },
+            { username: req.params.username, "savingsGoals.title": req.body.title },
             { $inc: { "savingsGoals.$.currentAmountSaved": req.body.amount } }
         );
         res.json(result);
