@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { IUser } from '../interfaces/user';
-import { addAmountToASavingsGoal, addBudget, addIncome, addSavingsGoal, addTransaction, debitTransaction, findUser, getUsers, insertUser, updateBudgetAmountSpent, updatebudgetamount, updateIncomeAmount,  } from '../../backend/functions/usersApis';
+import { addAmountToASavingsGoal, addBudget, addIncome, addSavingsGoal, addTransaction, debitTransaction, findUser, getUsers, insertUser, updateBudgetAmountSpent, updatebudgetamount, updateIncomeAmount, isExistingUser,  } from '../../backend/functions/usersApis';
 import { User } from '../classes/users';
 import { ITransaction } from '../interfaces/transactions';
 import { ISavingsGoal } from '../interfaces/savingsGoals';
@@ -31,8 +31,8 @@ describe("User Routes", () => {
     });
 
     it("Should handle error when inserting a new user", async () => {
-        const errorMessage = 'Error inserting user';
-        (axios.post as jest.Mock).mockRejectedValue(new Error(errorMessage));
+
+        (axios.post as jest.Mock).mockRejectedValue(new Error("Failed to insert user"));
         
         await expect(insertUser(user as User)).rejects.toThrow('Failed to insert user');
     });
@@ -48,13 +48,13 @@ describe("User Routes", () => {
     });
 
     it("Should handle error when fetching all users", async () => {
-        const errorMessage = 'Error fetching users';
-        (axios.get as jest.Mock).mockRejectedValue(new Error(errorMessage));
+
+        (axios.get as jest.Mock).mockRejectedValue(new Error("Failed to fetch all users"));
         
         await expect(getUsers()).rejects.toThrow('Failed to fetch all users');
     });
 
-    it("Should send a GET request to find a specific user", async () => {
+    it("Should send a GET request to find a specific user with given username and password", async () => {
         (axios.get as jest.Mock).mockResolvedValue({ data: user });
         
         const result = await findUser("abc", "abc");
@@ -62,10 +62,24 @@ describe("User Routes", () => {
         expect(result).toEqual(user);
     });
 
-    it("Should handle error when finding a specific user", async () => {
-        const errorMessage = 'Error finding user';
-        (axios.get as jest.Mock).mockRejectedValue(new Error(errorMessage));
+    it("Should handle error when finding a specific user with given username and password", async () => {
+
+        (axios.get as jest.Mock).mockRejectedValue(new Error("Failed to find such user"));
         await expect(findUser("abc", "abc")).rejects.toThrow('Failed to find such user');
+    });
+
+    it("Should send a GET request to find a specific user with given username", async () => {
+        (axios.get as jest.Mock).mockResolvedValue({ data: user });
+        
+        const result = await isExistingUser("abc");
+        expect(axios.get).toHaveBeenCalledWith(`http://localhost:4321/user/${user.username}`);
+        expect(result).toEqual(user);
+    });
+
+    it("Should handle error when finding a specific user with given username", async () => {
+
+        (axios.get as jest.Mock).mockRejectedValue(new Error("Failed to find such user"));
+        await expect(isExistingUser("abc")).rejects.toThrow('Failed to find such user');
     });
 
     it("Should update budget amount spent for the user", async () => {
@@ -81,8 +95,7 @@ describe("User Routes", () => {
 
     it("Should handle error when updating budget amount spent", async () => {
 
-        const errorMessage = 'Error updating budget amount spent';
-        (axios.put as jest.Mock).mockRejectedValue(new Error(errorMessage));
+        (axios.put as jest.Mock).mockRejectedValue(new Error("Failed to update budget amount spent for the user"));
 
         await expect(updateBudgetAmountSpent(user.username,"groceries", 1000,)).rejects.toThrow('Failed to update budget amount spent for the user');
     });
@@ -102,8 +115,7 @@ describe("User Routes", () => {
 
     it("Should handle error when adding a transaction", async () => {
 
-        const errorMessage = 'Error adding transaction';
-        (axios.put as jest.Mock).mockRejectedValue(new Error(errorMessage));
+        (axios.put as jest.Mock).mockRejectedValue(new Error("Error while inserting new transaction for the user"));
 
         const transaction :ITransaction = {id:user.transactions.length+1, type: "credit", amount:10000, category:"Salary", date:new Date()};;
         await expect(addTransaction(user.username, transaction)).rejects.toThrow('Error while inserting new transaction for the user');
@@ -122,8 +134,8 @@ describe("User Routes", () => {
     });
 
     it("Should handle error when adding income", async () => {
-        const errorMessage = 'Error adding income';
-        (axios.put as jest.Mock).mockRejectedValue(new Error(errorMessage));
+
+        (axios.put as jest.Mock).mockRejectedValue(new Error("Error while adding income user"));
    
         await expect(addIncome(user.username, "salary",1000)).rejects.toThrow('Error while adding income user');
     });
@@ -141,8 +153,8 @@ describe("User Routes", () => {
     });
 
     it("Should handle error when updating income amount", async () => {
-        const errorMessage = 'Error updating income amount';
-        (axios.put as jest.Mock).mockRejectedValue(new Error(errorMessage));
+
+        (axios.put as jest.Mock).mockRejectedValue(new Error("Error while updating income user"));
 
         await expect(updateIncomeAmount(user.username, "salary",200)).rejects.toThrow('Error while updating income user');
     });
@@ -160,8 +172,8 @@ describe("User Routes", () => {
     });
 
     it("Should handle error when handling debit transaction", async () => {
-        const errorMessage = 'Error handling debit transaction';
-        (axios.put as jest.Mock).mockRejectedValue(new Error(errorMessage));
+
+        (axios.put as jest.Mock).mockRejectedValue(new Error("Error while updating user"));
 
         await expect(debitTransaction(user.username, 100)).rejects.toThrow('Error while updating user');
     });
@@ -180,8 +192,8 @@ describe("User Routes", () => {
     });
 
     it("Should handle error when adding a budget", async () => {
-        const errorMessage = 'Error adding budget';
-        (axios.put as jest.Mock).mockRejectedValue(new Error(errorMessage));
+
+        (axios.put as jest.Mock).mockRejectedValue(new Error("Error while inserting new budget to the user"));
 
         await expect(addBudget(user.username, "groceries", 1000)).rejects.toThrow('Error while inserting new budget to the user');
     });
@@ -193,7 +205,7 @@ describe("User Routes", () => {
 
         const response: IUser = await updatebudgetamount(user.username,  "groceries", 1000, 1500);
 
-        expect(axios.put).toHaveBeenCalledWith(`http://localhost:4321/user/updatebudgetampunt/${user.username}`, {
+        expect(axios.put).toHaveBeenCalledWith(`http://localhost:4321/user/updatebudgetamount/${user.username}`, {
             category: "groceries",
             amount: 1000,
             totalBudget: 1500,
@@ -203,8 +215,8 @@ describe("User Routes", () => {
     });
 
     it("Should handle error when updating budget amount", async () => {
-        const errorMessage = 'Error updating budget amount';
-        (axios.put as jest.Mock).mockRejectedValue(new Error(errorMessage));
+
+        (axios.put as jest.Mock).mockRejectedValue(new Error("Error while updating user budget amount"));
 
         await expect(updatebudgetamount(user.username,  "groceries", 1500, 1000,)).rejects.toThrow('Error while updating user budget amount');
     });
@@ -225,8 +237,7 @@ describe("User Routes", () => {
     it("Should handle error when adding a savings goal", async () => {
         const savingsGoal:ISavingsGoal = { title: "Emergency Fund", targetAmount: 5000, currentAmountSaved: 1000,};
 
-        const errorMessage = 'Error adding savings goal';
-        (axios.put as jest.Mock).mockRejectedValue(new Error(errorMessage));
+        (axios.put as jest.Mock).mockRejectedValue(new Error("Error while adding savings goal to the user"));
 
         await expect(addSavingsGoal(user.username, savingsGoal)).rejects.toThrow('Error while adding savings goal to the user');
     });
@@ -247,8 +258,8 @@ describe("User Routes", () => {
     });
 
     it("Should handle error when adding amount to a savings goal", async () => {
-        const errorMessage = 'Error adding amount to savings goal';
-        (axios.put as jest.Mock).mockRejectedValue(new Error(errorMessage));
+
+        (axios.put as jest.Mock).mockRejectedValue(new Error("Error while adding amount to savings goal of the user"));
 
         await expect(addAmountToASavingsGoal(user.username, "Emergency Fund", 500)).rejects.toThrow('Error while adding amount to savings goal of the user');
     });
