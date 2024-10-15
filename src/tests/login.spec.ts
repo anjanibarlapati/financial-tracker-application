@@ -1,40 +1,62 @@
 import { login } from "../functions/login";
 import { register } from "../functions/registration";
+import { Server, IncomingMessage, ServerResponse } from "http";
+import { User } from "../../backend/models/users";
+import { start } from "../../backend/indexTest";
+import mongoose from "mongoose";
+
 
 describe("User Authentication Functionality",()=>{
 
-    test("should log in the user with correct credentials", ()=>{
-
-        register("anjani", "anjani123");
-        expect(login("anjani", "anjani123")).toBeTruthy()
+    let server: Server<typeof IncomingMessage, typeof ServerResponse> | undefined;
+    beforeAll(async () => {
+        server = await start();
     });
 
-    test("should throw an error if username is inavlid", ()=>{
-        expect(()=>login("anjaniii", "anjani123")).toThrow('Username and password should be valid');
+    afterEach(async () => {
+
     });
 
-    test("shouldthrow an error if password is incorrect", ()=>{   
-        expect(()=>login("anjani", "12345")).toThrow('Username and password should be valid');
+    afterAll(async () => {
+        await User.deleteMany(); 
+        await mongoose.connection.close();
+        console.log("Connection closed successfully");
+        if(server)
+           server.close();
     });
 
-    test("should throw an error if username or password is not given", ()=>{
-        expect(()=>login("12345")).toThrow('Provide both username and password');
+    test("should log in the user with correct credentials", async ()=>{
+
+        const newUser = await register("anjani", "anjani123");
+        expect(await login("anjani", "anjani123")).toBeTruthy()
     });
 
-    test("should throw an error if both username and password is not given", ()=>{
-        expect(()=>login()).toThrow('Provide both username and password');
+    test("should throw an error if username is inavlid", async  ()=>{
+        await expect(login("anjaniii", "anjani123")).rejects.toThrow('Username and password should be valid');
     });
 
-    test("should throw an error if username is empty", ()=>{
-        expect(()=>login("","anjani123")).toThrow('Username and password should be non-empty');
+    test("shouldthrow an error if password is incorrect", async ()=>{   
+        await expect(login("anjani", "12345")).rejects.toThrow('Username and password should be valid');
+    });
+
+    test("should throw an error if username or password is not given", async ()=>{
+        await expect(login("12345")).rejects.toThrow('Provide both username and password');
+    });
+
+    test("should throw an error if both username and password is not given", async ()=>{
+        await expect(login()).rejects.toThrow('Provide both username and password');
+    });
+
+    test("should throw an error if username is empty", async ()=>{
+        await expect( login("","anjani123")).rejects.toThrow('Username and password should be non-empty');
     })
 
-    test("should throw an error if password is empty", ()=>{
-        expect(()=>login("anjani","")).toThrow('Username and password should be non-empty');
+    test("should throw an error if password is empty", async ()=>{
+        await expect(login("anjani","")).rejects.toThrow('Username and password should be non-empty');
     });
 
-    test("should throw an error if both username and passowrd is empty", ()=>{
-        expect(()=>login("","")).toThrow(new Error('Username and password should be non-empty'));
+    test("should throw an error if both username and passowrd is empty", async ()=>{
+        await expect(login("","")).rejects.toThrow(new Error('Username and password should be non-empty'));
     })
 
 })

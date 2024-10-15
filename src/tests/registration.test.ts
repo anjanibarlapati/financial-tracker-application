@@ -36,7 +36,7 @@ describe("User Registration Functionality", () => {
     });
 
     test("should throw an error if both username and passowrd is empty", async ()=>{
-        expect(register("","")).rejects.toThrow('Username and password should be non-empty');
+        await expect(register("","")).rejects.toThrow('Username and password should be non-empty');
     });
 
     test("should throw an error if username is already exist", async () => {

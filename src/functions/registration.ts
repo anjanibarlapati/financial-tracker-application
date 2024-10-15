@@ -1,7 +1,5 @@
-import { getUsers, insertUser, isExistingUser } from "../../backend/functions/usersApis";
-import { getUser } from "../../backend/functions/usersRoutesHandler";
+import { insertUser, isExistingUser } from "../../backend/functions/usersApis";
 import { User } from "../classes/users";
-import { users } from "../data/users";
 
 export async function register(...credentials:string[]){
 

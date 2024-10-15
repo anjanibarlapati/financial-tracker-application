@@ -1,6 +1,6 @@
-import { users } from "../data/users";
+import { findUser } from "../../backend/functions/usersApis";
 
-export function login(...credentials:string[]){
+export async function login(...credentials:string[]){
 
     if(credentials.length!=2) {
         throw new Error('Provide both username and password') ;
@@ -12,8 +12,7 @@ export function login(...credentials:string[]){
         throw new Error('Username and password should be non-empty');
      }
 
-    const user = users.find((user)=>user.username === username && user.password === password);
-
+    const user = await findUser(username, password);
     if(!user){
         throw new Error('Username and password should be valid');
     }
