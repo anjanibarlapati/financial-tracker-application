@@ -28,6 +28,15 @@ export const getUser = async (req: Request, res: Response) => {
     }
 };
 
+export const isExistingUser = async (req: Request, res: Response) => {
+    try {
+        const user = await User.findOne({ username: req.params.username});
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({ message: 'Error while getting user' });
+    }
+};
+
 export const updateBudgetAmountSpent = async (req: Request, res: Response) => {
     try {
         const user = await User.updateOne(
