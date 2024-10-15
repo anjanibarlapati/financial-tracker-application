@@ -1,6 +1,6 @@
 import express from 'express';
 import {
-    createUser, getAllUsers, getUser, updateBudgetAmountSpent, addTransaction, addIncome, updateIncomeAmount, 
+    createUser, getAllUsers, getUser,isExistingUser,  updateBudgetAmountSpent, addTransaction, addIncome, updateIncomeAmount, 
     debitAmount, addBudget, updateBudgetAmount, addSavingsGoal, updateSavingsGoalAmount
 } from '../functions/usersRoutesHandler';
 
@@ -11,6 +11,8 @@ userRouter.post('/user', createUser);
 userRouter.get('/users', getAllUsers);
 
 userRouter.get('/user', getUser);
+
+userRouter.get('/user/:username', isExistingUser);
 
 userRouter.put('/user/budgetamountspent/:username', updateBudgetAmountSpent);
 
@@ -24,7 +26,7 @@ userRouter.put('/user/transaction/debit/:username', debitAmount);
 
 userRouter.put('/user/budget/:username', addBudget);
 
-userRouter.put('/user/updatebudgetampunt/:username', updateBudgetAmount);
+userRouter.put('/user/updatebudgetamount/:username', updateBudgetAmount);
 
 userRouter.put('/user/savingsgoal/:username', addSavingsGoal);
 
