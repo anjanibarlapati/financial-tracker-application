@@ -64,7 +64,7 @@ export async function addIncome(username:string, category:string, amount:number)
         const response = await axios.put(`http://localhost:4321/user/income/${username}`,{category:category, amount:amount});
         return response.data;
     } catch (error) {
-        throw new Error('Error while adding income user');
+        throw new Error('Error while adding income to the user');
     } 
 }
 

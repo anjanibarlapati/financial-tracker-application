@@ -28,7 +28,7 @@ describe("Savings Goals Functionality",()=>{
     });
 
     afterAll(async () => {
-        // await UserModel.deleteMany(); 
+        await UserModel.deleteMany(); 
         await mongoose.connection.close();
         console.log("Connection closed successfully");
         if(server)

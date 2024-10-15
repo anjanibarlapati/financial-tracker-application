@@ -1,14 +1,24 @@
-import { User } from "../classes/users";
+import { User as UserClass } from "../classes/users";
 import { register } from "../functions/registration";
 import { IFinancialReport, IFinancialReportBudget, IFinancialReportSavingsGoal } from "../interfaces/financialReport";
 import { ITransaction } from "../interfaces/transactions";
+import { User as UserModel} from "../../backend/models/users";
+import { Server, IncomingMessage, ServerResponse } from "http";
+import mongoose from "mongoose";
+import { start } from "../../backend/indexTest";
 
 describe("Financial Report Functionality",()=>{
 
-    let user:User;
+    let server: Server<typeof IncomingMessage, typeof ServerResponse> | undefined;
+
+    let userDocument:any;
+    let user:UserClass;
     
-    beforeAll(()=>{
-        user = register("anjani", "anjani123");
+    beforeAll(async () => {
+        server = await start();
+        userDocument = await register("anjani", "anjani123");
+        user = new UserClass(userDocument.username, userDocument.password);
+
         const transactions:ITransaction[] = [
             {    id:1, type: 'credit', amount: 10000, category: "Rental Salary", date:new Date("2024-09-05")},
             {    id:2, type: 'debit', amount: 480, category: "Other", date:new Date("2024-09-06")},
@@ -42,11 +52,27 @@ describe("Financial Report Functionality",()=>{
             {title: "Home", targetAmount:5000, currentAmountSaved:3800},
             {title: "Emergency Fund", targetAmount:1000, currentAmountSaved:700}
         ]
-        user.transaction({id:20, type: 'credit', amount: 30000, category: "Interest Income", date:new Date("2024-09-05")});
-        budgets.forEach(b=>user.setBudget(b.category, b.amount));
-        transactions.forEach(t=>user.transaction(t));
-        savings.forEach(s=>user.addSavingsGoal(s));
-    })
+        await user.transaction({id:20, type: 'credit', amount: 30000, category: "Interest Income", date:new Date("2024-09-05")});
+
+        for (const budget of budgets) {
+            await user.setBudget(budget.category, budget.amount);
+        }
+        for (const transaction of transactions) {
+            await user.transaction(transaction);
+        }
+        for (const saving of savings) {
+            await user.addSavingsGoal(saving);
+        }
+
+    });
+
+    afterAll(async () => {
+        await UserModel.deleteMany(); 
+        await mongoose.connection.close();
+        console.log("Connection closed successfully");
+        if(server)
+           server.close();
+    });
 
     test("Should return total income and expenses financial report of a user",()=>{
 
@@ -65,6 +91,7 @@ describe("Financial Report Functionality",()=>{
         expect(user.totalIncomeAndExpenses(new Date("2024-09-05"), new Date("2024-09-15"))).toEqual(report1);
         expect(user.totalIncomeAndExpenses(new Date("2024-09-20"), new Date("2024-09-26"))).toEqual(report2);
         expect(user.totalIncomeAndExpenses(new Date("2024-09-01"), new Date("2024-09-04"))).toEqual(report3);
+
 
     })
 

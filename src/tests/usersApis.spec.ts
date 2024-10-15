@@ -156,7 +156,7 @@ describe("User Routes", () => {
 
         (axios.put as jest.Mock).mockRejectedValue(new Error("Error while updating income user"));
 
-        await expect(updateIncomeAmount(user.username, "salary",200)).rejects.toThrow('Error while updating income user');
+        await expect(updateIncomeAmount(user.username, "salary",200)).rejects.toThrow('Error while updating income to the user');
     });
 
     it("Should handle debit transaction for the user", async () => {
