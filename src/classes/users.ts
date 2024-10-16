@@ -5,6 +5,8 @@ import { IIncome } from "../interfaces/income";
 import { ISavingsGoal } from "../interfaces/savingsGoals";
 import { ITransaction } from "../interfaces/transactions";
 import { IUser } from "../interfaces/user";
+import fs from 'fs';
+import csvParser from 'csv-parser';
 
 
 export class User implements IUser {
@@ -249,6 +251,33 @@ export class User implements IUser {
             return { title: goal.title, progress: ((goal.currentAmountSaved / goal.targetAmount) * 100).toFixed(0) + "%" }
         });
         return savingsGoalsReport;
+    }
+
+    async addTransactionsfromCSVFile(transactionsPath:string){
+
+            if(!transactionsPath || transactionsPath.trim()==="") {
+               throw new Error("Transactions data path is not defined")
+            }
+
+            const fileStream = fs.createReadStream(transactionsPath);
+            const csvPipe = fileStream.pipe(csvParser());
+             let count =0;
+
+             for await (const data of csvPipe) {
+                console.log("Processing Record " + (++count) + ": " + data);
+                const transaction = {
+                    id: this.transactions.length + 1,
+                    type: data.type as "debit" | "credit",
+                    amount: Number(data.amount),
+                    category: data.category,
+                    date: new Date(data.date),
+                };
+        
+                await this.transaction(transaction);
+                console.log("Transaction inserted");
+            }
+
+            console.log("Inserted transactions");
     }
 
 }
