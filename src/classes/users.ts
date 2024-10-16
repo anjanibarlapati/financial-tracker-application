@@ -65,8 +65,6 @@ export class User implements IUser {
 
         this.isValidTransaction(txn);
 
-
-
         if (txn.type === 'credit') {
             this.availableBalance += txn.amount;
             this.totalIncome += txn.amount;

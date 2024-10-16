@@ -39,9 +39,10 @@ export const isExistingUser = async (req: Request, res: Response) => {
 
 export const updateBudgetAmountSpent = async (req: Request, res: Response) => {
     try {
-        const user = await User.updateOne(
+        const user = await User.findOneAndUpdate(
             { username: req.params.username, "budgets.category": req.body.category },
-            { $inc: { "budgets.$.amountSpent": req.body.amount } }
+            { $inc: { "budgets.$.amountSpent": req.body.amount }},
+            {new:true}
         );
         res.json(user);
     } catch (error) {
@@ -53,7 +54,8 @@ export const addTransaction = async (req: Request, res: Response) => {
     try {
         const user = await User.findOneAndUpdate(
             { username: req.params.username },
-            { $push: { transactions: req.body } }
+            { $push: { transactions: req.body } },
+            {new:true}
         );
         res.json(user);
     } catch (error) {
@@ -68,7 +70,8 @@ export const addIncome = async (req: Request, res: Response) => {
             {
                 $push: { income: { source: req.body.category, amount: req.body.amount } },
                 $inc: { availableBalance: req.body.amount, totalIncome: req.body.amount }
-            }
+            },
+            {new:true}
         );
         res.json({ message: 'Income added successfully' });
     } catch (error) {
@@ -82,11 +85,12 @@ export const updateIncomeAmount = async (req: Request, res: Response) => {
             { username: req.params.username, 'income.source': req.body.category },
             {
                 $inc: { 'income.$.amount': req.body.amount, availableBalance: req.body.amount, totalIncome: req.body.amount }
-            }
+            },
+            {new:true}
         );
         res.json(user);
     } catch (error) {
-        res.status(500).json({ message: 'Error while updating income user' });
+        res.status(500).json({ message: 'Error while updating income to the user' });
     }
 };
 
@@ -96,7 +100,8 @@ export const debitAmount = async (req: Request, res: Response) => {
             { username: req.params.username },
             {
                 $inc: { availableBalance: -req.body.amount }
-            }
+            },
+            {new:true}
         );
         res.json(user);
     } catch (error) {
@@ -111,7 +116,8 @@ export const addBudget = async (req: Request, res: Response) => {
             {
                 $push: { budgets: { category: req.body.category, amount: req.body.amount, amountSpent: 0 } },
                 $inc: { totalBudget: req.body.amount }
-            }
+            },
+            {new:true}
         );
         res.json(result);
     } catch (error) {
@@ -125,7 +131,8 @@ export const updateBudgetAmount = async (req: Request, res: Response) => {
             { username: req.params.username, "budgets.category": req.body.category },
             {
                 $set: { totalBudget: req.body.totalBudget, "budgets.$.amount": req.body.amount}
-            }
+            },
+            {new:true}
         );
         res.json(result);
     } catch (error) {
@@ -139,7 +146,8 @@ export const addSavingsGoal = async (req: Request, res: Response) => {
             { username: req.params.username },
             {
                 $push: { savingsGoals: req.body },
-            }
+            },
+            {new:true}
         );
         res.json(result);
     } catch (error) {
@@ -151,7 +159,8 @@ export const updateSavingsGoalAmount = async (req: Request, res: Response) => {
     try {
         const result = await User.findOneAndUpdate(
             { username: req.params.username, "savingsGoals.title": req.body.title },
-            { $inc: { "savingsGoals.$.currentAmountSaved": req.body.amount } }
+            { $inc: { "savingsGoals.$.currentAmountSaved": req.body.amount } },
+            {new:true}
         );
         res.json(result);
     } catch (error) {

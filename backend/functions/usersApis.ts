@@ -59,6 +59,12 @@ export async function addTransaction(username:string, transaction:ITransaction){
     }
 }
 
+// async function x(){
+//   console.log(await addTransaction("c", {id:1, type: 'credit', amount: 10000, category: "Rental Salary", date:new Date("2024-09-05")}))
+// }
+
+// x();
+
 export async function addIncome(username:string, category:string, amount:number){
     try {
         const response = await axios.put(`http://localhost:4321/user/income/${username}`,{category:category, amount:amount});
@@ -74,7 +80,7 @@ export async function updateIncomeAmount(username:string, category:string, amoun
         const response = await axios.put(`http://localhost:4321/user/incomeamount/${username}`,{category:category, amount:amount});
         return response.data;
     } catch (error) {
-        throw new Error('Error while updating income user');
+        throw new Error('Error while updating income to the user');
     } 
 }
 

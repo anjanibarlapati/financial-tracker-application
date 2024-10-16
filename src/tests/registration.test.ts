@@ -1,8 +1,9 @@
 import mongoose from "mongoose";
 import { register } from "../functions/registration";
 import { User } from "../../backend/models/users";
-import { start } from "../../backend/indexTest";
+import { start } from "../../backend/testIndex";
 import { Server, IncomingMessage, ServerResponse } from "http";
+import { IUser } from "../interfaces/user";
 
 describe("User Registration Functionality", () => {
     let server: Server<typeof IncomingMessage, typeof ServerResponse> | undefined;
@@ -23,7 +24,7 @@ describe("User Registration Functionality", () => {
 
 
     test("should register the user when username and password are provided", async () => {
-        const user = await register("anjani", "anjani123");
+        const user:IUser = await register("anjani", "anjani123");
         expect(user.username).toBe("anjani");
     });
 

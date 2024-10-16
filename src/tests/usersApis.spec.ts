@@ -135,9 +135,9 @@ describe("User Routes", () => {
 
     it("Should handle error when adding income", async () => {
 
-        (axios.put as jest.Mock).mockRejectedValue(new Error("Error while adding income user"));
+        (axios.put as jest.Mock).mockRejectedValue(new Error("Error while adding income to the user"));
    
-        await expect(addIncome(user.username, "salary",1000)).rejects.toThrow('Error while adding income user');
+        await expect(addIncome(user.username, "salary",1000)).rejects.toThrow('Error while adding income to the user');
     });
 
     it("Should update income amount for the user", async () => {
@@ -154,7 +154,7 @@ describe("User Routes", () => {
 
     it("Should handle error when updating income amount", async () => {
 
-        (axios.put as jest.Mock).mockRejectedValue(new Error("Error while updating income user"));
+        (axios.put as jest.Mock).mockRejectedValue(new Error("Error while updating income to the user"));
 
         await expect(updateIncomeAmount(user.username, "salary",200)).rejects.toThrow('Error while updating income to the user');
     });
@@ -251,7 +251,7 @@ describe("User Routes", () => {
        const response =  await addAmountToASavingsGoal(user.username, "Emergency Fund", 500);
 
         expect(axios.put).toHaveBeenCalledWith(`http://localhost:4321/user/savingsgoalamount/${user.username}`, {
-            category: "Emergency Fund",
+            title: "Emergency Fund",
             amount: 500,
         });
         expect(response).toEqual(updatedUser);

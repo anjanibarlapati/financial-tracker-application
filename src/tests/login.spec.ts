@@ -2,8 +2,9 @@ import { login } from "../functions/login";
 import { register } from "../functions/registration";
 import { Server, IncomingMessage, ServerResponse } from "http";
 import { User } from "../../backend/models/users";
-import { start } from "../../backend/indexTest";
+import { start } from "../../backend/testIndex";
 import mongoose from "mongoose";
+import { IUser } from "../interfaces/user";
 
 
 describe("User Authentication Functionality",()=>{
@@ -23,7 +24,7 @@ describe("User Authentication Functionality",()=>{
 
     test("should log in the user with correct credentials", async ()=>{
 
-        const newUser = await register("anjani", "anjani123");
+        const newUser:IUser = await register("anjani", "anjani123");
         expect(await login("anjani", "anjani123")).toBeTruthy()
     });
 

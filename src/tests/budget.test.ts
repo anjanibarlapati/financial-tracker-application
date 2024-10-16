@@ -3,14 +3,15 @@ import { register } from "../functions/registration";
 import { ITransaction } from "../interfaces/transactions";
 import { Server, IncomingMessage, ServerResponse } from "http";
 import { User as UserModel} from "../../backend/models/users";
-import { start } from "../../backend/indexTest";
+import { start } from "../../backend/testIndex";
 import mongoose from "mongoose";
+import { IUser } from "../interfaces/user";
 
 describe("Budget Functionality",()=>{
 
     let server: Server<typeof IncomingMessage, typeof ServerResponse> | undefined;
 
-    let userDocument:any;
+    let userDocument:IUser;
     let user:UserClass;
     
     beforeAll(async () => {

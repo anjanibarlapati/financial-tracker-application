@@ -128,20 +128,21 @@ describe('User Controller', () => {
         it('should update budget amount spent', async () => {
             req.params = { username: 'abc' };
             req.body = { category: 'groceries', amount: 50 };
-            const mockedResult = { modifiedCount: 1 };
-            (User.updateOne as jest.Mock).mockResolvedValue(mockedResult);
+            const mockedResult = {...user, budgets:{category: 'groceries', amount: 50, amountSpent:0}};
+            (User.findOneAndUpdate as jest.Mock).mockResolvedValue(mockedResult);
 
             await updateBudgetAmountSpent(req as Request, res as Response);
 
-            expect(User.updateOne).toHaveBeenCalledWith(
+            expect(User.findOneAndUpdate).toHaveBeenCalledWith(
                 { username: req.params.username, "budgets.category": req.body.category },
-                { $inc: { "budgets.$.amountSpent": req.body.amount } }
+                { $inc: { "budgets.$.amountSpent": req.body.amount } },
+                {new:true}
             );
             expect(res.json).toHaveBeenCalledWith(mockedResult);
         });
 
         it('should handle errors', async () => {
-            (User.updateOne as jest.Mock).mockRejectedValue(new Error('Error while updating budget amount spent for the user'));
+            (User.findOneAndUpdate as jest.Mock).mockRejectedValue(new Error('Error while updating budget amount spent for the user'));
 
             await updateBudgetAmountSpent(req as Request, res as Response);
 
@@ -161,7 +162,8 @@ describe('User Controller', () => {
 
             expect(User.findOneAndUpdate).toHaveBeenCalledWith(
                 { username: req.params.username },
-                { $push: { transactions: req.body } }
+                { $push: { transactions: req.body } },
+                {new:true}
             );
             expect(res.json).toHaveBeenCalledWith(mockedResult);
         });
@@ -189,8 +191,10 @@ describe('User Controller', () => {
                 { username: req.params.username },
                 {
                     $push: { income: { source: req.body.category, amount: req.body.amount } },
-                    $inc: { availableBalance: req.body.amount, totalIncome: req.body.amount }
-                }
+                    $inc: { availableBalance: req.body.amount, totalIncome: req.body.amount },
+                    
+                },
+                {new:true}
             );
             expect(res.json).toHaveBeenCalledWith({ message: 'Income added successfully' });
         });
@@ -218,18 +222,19 @@ describe('User Controller', () => {
                 { username: req.params.username, 'income.source': req.body.category },
                 {
                     $inc: { 'income.$.amount': req.body.amount, availableBalance: req.body.amount, totalIncome: req.body.amount }
-                }
+                },
+                {new:true}
             );
             expect(res.json).toHaveBeenCalledWith(mockedResult);
         });
 
         it('should handle errors', async () => {
-            (User.findOneAndUpdate as jest.Mock).mockRejectedValue(new Error('Error while updating income user'));
+            (User.findOneAndUpdate as jest.Mock).mockRejectedValue(new Error('Error while updating income to the user'));
 
             await updateIncomeAmount(req as Request, res as Response);
 
             expect(res.status).toHaveBeenCalledWith(500);
-            expect(res.json).toHaveBeenCalledWith({ message: 'Error while updating income user' });
+            expect(res.json).toHaveBeenCalledWith({ message: 'Error while updating income to the user' });
         });
     });
 
@@ -244,7 +249,8 @@ describe('User Controller', () => {
 
             expect(User.findOneAndUpdate).toHaveBeenCalledWith(
                 { username: req.params.username },
-                { $inc: { availableBalance: -req.body.amount } }
+                { $inc: { availableBalance: -req.body.amount } },
+                {new:true}
             );
             expect(res.json).toHaveBeenCalledWith(mockResult);
         });
@@ -273,7 +279,8 @@ describe('User Controller', () => {
                 {
                     $push: { budgets: { category: req.body.category, amount: req.body.amount, amountSpent: 0 } },
                     $inc: { totalBudget: req.body.amount }
-                }
+                },
+                {new:true}
             );
             expect(res.json).toHaveBeenCalledWith(mockResult);
         });
@@ -301,7 +308,8 @@ describe('User Controller', () => {
                 { username: req.params.username, "budgets.category": req.body.category },
                 {
                     $set: { totalBudget: req.body.totalBudget, "budgets.$.amount": req.body.amount }
-                }
+                },
+                {new:true}
             );
             expect(res.json).toHaveBeenCalledWith(mockResult);
         });
@@ -329,7 +337,8 @@ describe('User Controller', () => {
                 { username: req.params.username },
                 {
                     $push: { savingsGoals: req.body },
-                }
+                },
+                {new:true}
             );
             expect(res.json).toHaveBeenCalledWith(mockResult);
         });
@@ -355,7 +364,8 @@ describe('User Controller', () => {
 
             expect(User.findOneAndUpdate).toHaveBeenCalledWith(
                 { username: req.params.username, "savingsGoals.title": req.body.title },
-                { $inc: { "savingsGoals.$.currentAmountSaved": req.body.amount } }
+                { $inc: { "savingsGoals.$.currentAmountSaved": req.body.amount } },
+                {new:true}
             );
             expect(res.json).toHaveBeenCalledWith(mockResult);
         });
