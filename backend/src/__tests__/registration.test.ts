@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { register } from "../functions/registration";
-import { User } from "../../backend/models/users";
-import { start } from "../../backend/testIndex";
+import { User } from "../models/users";
+import { start } from "../testServer";
 import { Server, IncomingMessage, ServerResponse } from "http";
 import { IUser } from "../interfaces/user";
 

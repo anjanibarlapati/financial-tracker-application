@@ -1,4 +1,4 @@
-import { findUser } from "../../backend/functions/usersApis";
+import { findUser } from "../services/usersApis";
 
 export async function login(...credentials:string[]){
 

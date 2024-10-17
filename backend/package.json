@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest --watch --runInBand",
-    "dev": "npx ts-node ./backend/index.ts",
+    "dev": "npx ts-node ./src/server.ts",
     "start": "npx ts-node ./src/index.ts"
   },
   "keywords": [],

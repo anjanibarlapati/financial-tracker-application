@@ -4,7 +4,7 @@ import bodyParser from 'body-parser';
 import {dbConnection} from './configuration/db';
 import { insertUsersData } from './insertions/insertions';
 import { userRouter } from './routes/users';
-import { users } from './data/users';
+import { users } from './data/dbUsers';
 
 
 const app = express();

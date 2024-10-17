@@ -1,7 +1,7 @@
 import axios from "axios";
-import { User } from "../../src/classes/users";
-import { ITransaction } from "../../src/interfaces/transactions";
-import { ISavingsGoal } from "../../src/interfaces/savingsGoals";
+import { User } from "../classes/users";
+import { ITransaction } from "../interfaces/transactions";
+import { ISavingsGoal } from "../interfaces/savingsGoals";
 
 export async function insertUser(user: User) {
     try {

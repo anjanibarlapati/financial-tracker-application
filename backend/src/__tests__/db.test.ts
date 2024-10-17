@@ -1,4 +1,4 @@
-import { dbConnection } from "../../backend/configuration/db"
+import { dbConnection } from "../configuration/db"
 import mongoose from 'mongoose';
 
 jest.mock('mongoose');

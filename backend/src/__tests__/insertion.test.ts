@@ -1,8 +1,8 @@
-import { insertUsersData } from '../../backend/insertions/insertions';
-import { User } from '../../backend/models/users';
+import { insertUsersData } from '../insertions/insertions';
+import { User } from '../models/users';
 import { users } from "../data/users";
 
-jest.mock('../../backend/models/users');
+jest.mock('../models/users');
 jest.mock('../data/users', () => ({
   users: []
 }));

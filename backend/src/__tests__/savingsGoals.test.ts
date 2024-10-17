@@ -1,9 +1,9 @@
-import { start } from "../../backend/testIndex";
+import { start } from "../testServer";
 import { User as UserClass } from "../classes/users";
 import { register } from "../functions/registration";
 import { ISavingsGoal } from "../interfaces/savingsGoals";
 import { ITransaction } from "../interfaces/transactions";
-import { User as UserModel} from "../../backend/models/users";
+import { User as UserModel} from "../models/users";
 import { Server, IncomingMessage, ServerResponse } from "http";
 import mongoose from "mongoose";
 import { IUser } from "../interfaces/user";

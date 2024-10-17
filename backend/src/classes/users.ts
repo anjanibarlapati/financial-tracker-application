@@ -1,4 +1,4 @@
-import { addAmountToASavingsGoal, addBudget, addIncome, addSavingsGoal, addTransaction, debitAmount, updateBudgetAmount, updateBudgetAmountSpent, updateIncomeAmount } from "../../backend/functions/usersApis";
+import { addAmountToASavingsGoal, addBudget, addIncome, addSavingsGoal, addTransaction, debitAmount, updateBudgetAmount, updateBudgetAmountSpent, updateIncomeAmount } from "../services/usersApis";
 import { IBudget } from "../interfaces/budget";
 import { IFinancialReport, IFinancialReportBudget, IFinancialReportSavingsGoal } from "../interfaces/financialReport";
 import { IIncome } from "../interfaces/income";

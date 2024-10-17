@@ -1,8 +1,8 @@
 import { login } from "../functions/login";
 import { register } from "../functions/registration";
 import { Server, IncomingMessage, ServerResponse } from "http";
-import { User } from "../../backend/models/users";
-import { start } from "../../backend/testIndex";
+import { User } from "../models/users";
+import { start } from "../testServer";
 import mongoose from "mongoose";
 import { IUser } from "../interfaces/user";
 

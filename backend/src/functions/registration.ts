@@ -1,4 +1,4 @@
-import { insertUser, isExistingUser } from "../../backend/functions/usersApis";
+import { insertUser, isExistingUser } from "../services/usersApis";
 import { User } from "../classes/users";
 
 export async function register(...credentials:string[]){

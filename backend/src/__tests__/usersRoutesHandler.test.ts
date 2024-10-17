@@ -1,11 +1,11 @@
 
 import { Request, Response } from 'express';
-import { addBudget, addIncome, addSavingsGoal, addTransaction, createUser, isExistingUser, debitAmount, getAllUsers, getUser, updateBudgetAmount, updateBudgetAmountSpent, updateIncomeAmount, updateSavingsGoalAmount, registerUser } from '../../backend/functions/usersRoutesHandler';
-import { User } from '../../backend/models/users';
+import { addBudget, addIncome, addSavingsGoal, addTransaction, createUser, isExistingUser, debitAmount, getAllUsers, getUser, updateBudgetAmount, updateBudgetAmountSpent, updateIncomeAmount, updateSavingsGoalAmount, registerUser } from '../controllers/usersRoutesHandler';
+import { User } from '../models/users';
 import { IUser } from '../interfaces/user';
 import { register } from '../functions/registration';
 
-jest.mock('../../backend/models/users'); 
+jest.mock('../models/users'); 
 jest.mock('../functions/registration', () => ({
     register: jest.fn(),
 }));

@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { testDbConnection } from '../../backend/configuration/testDb';
+import { testDbConnection } from '../configuration/testDb';
 
 jest.mock('mongoose');
 

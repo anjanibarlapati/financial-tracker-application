@@ -1,12 +1,10 @@
 import express from 'express';
-import { Request, Response } from 'express';
 
 import {
     createUser, getAllUsers, getUser,isExistingUser,  updateBudgetAmountSpent, addTransaction, addIncome, updateIncomeAmount, 
     debitAmount, addBudget, updateBudgetAmount, addSavingsGoal, updateSavingsGoalAmount,
     registerUser
-} from '../functions/usersRoutesHandler';
-import { register } from '../../src/functions/registration';
+} from '../controllers/usersRoutesHandler';
 
 export const userRouter = express.Router();
 

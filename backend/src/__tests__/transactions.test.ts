@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
-import { start } from "../../backend/testIndex";
+import { start } from "../testServer";
 import { User as UserClass } from "../classes/users";
 import { register } from "../functions/registration";
 import { ITransaction } from "../interfaces/transactions";
 import { Server, IncomingMessage, ServerResponse } from "http";
-import { User as UserModel} from "../../backend/models/users";
+import { User as UserModel} from "../models/users";
 import { IUser } from "../interfaces/user";
 
 

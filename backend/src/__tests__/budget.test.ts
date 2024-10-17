@@ -2,8 +2,8 @@ import { User as UserClass} from "../classes/users";
 import { register } from "../functions/registration";
 import { ITransaction } from "../interfaces/transactions";
 import { Server, IncomingMessage, ServerResponse } from "http";
-import { User as UserModel} from "../../backend/models/users";
-import { start } from "../../backend/testIndex";
+import { User as UserModel} from "../models/users";
+import { start } from "../testServer";
 import mongoose from "mongoose";
 import { IUser } from "../interfaces/user";
 

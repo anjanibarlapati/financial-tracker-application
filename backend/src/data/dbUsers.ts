@@ -1,4 +1,4 @@
-import { IUser } from "../../src/interfaces/user";
+import { IUser } from "../interfaces/user";
 
 export let users:IUser[]=[
     {

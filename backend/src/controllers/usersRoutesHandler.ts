@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { User } from '../models/users';
-import { register } from '../../src/functions/registration';
+import { register } from '../functions/registration';
 
 export const createUser = async (req: Request, res: Response) => {
     try {

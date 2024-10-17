@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { IUser } from '../interfaces/user';
-import { addAmountToASavingsGoal, addBudget, addIncome, addSavingsGoal, addTransaction, debitAmount, findUser, getUsers, insertUser, updateBudgetAmountSpent, updateBudgetAmount, updateIncomeAmount, isExistingUser,  } from '../../backend/functions/usersApis';
+import { addAmountToASavingsGoal, addBudget, addIncome, addSavingsGoal, addTransaction, debitAmount, findUser, getUsers, insertUser, updateBudgetAmountSpent, updateBudgetAmount, updateIncomeAmount, isExistingUser,  } from '../services/usersApis';
 import { User } from '../classes/users';
 import { ITransaction } from '../interfaces/transactions';
 import { ISavingsGoal } from '../interfaces/savingsGoals';

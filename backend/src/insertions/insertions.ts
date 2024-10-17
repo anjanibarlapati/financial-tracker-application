@@ -1,4 +1,4 @@
-import { IUser } from "../../src/interfaces/user";
+import { IUser } from "../interfaces/user";
 import { User } from "../models/users";
 
 export async function insertUsersData(users: IUser[]) {

@@ -2,10 +2,10 @@ import { User as UserClass } from "../classes/users";
 import { register } from "../functions/registration";
 import { IFinancialReport, IFinancialReportBudget, IFinancialReportSavingsGoal } from "../interfaces/financialReport";
 import { ITransaction } from "../interfaces/transactions";
-import { User as UserModel} from "../../backend/models/users";
+import { User as UserModel} from "../models/users";
 import { Server, IncomingMessage, ServerResponse } from "http";
 import mongoose from "mongoose";
-import { start } from "../../backend/testIndex";
+import { start } from "../testServer";
 import { IUser } from "../interfaces/user";
 
 describe("Financial Report Functionality",()=>{
