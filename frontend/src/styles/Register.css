@@ -8,4 +8,12 @@
 
 .app-title{
     color:#216D9F;
+    font-size: 50px;
+    font-weight: bold;
+}
+
+.app-logo{
+    width:10%;
+    height:15%;
+    object-fit:'fill';
 }

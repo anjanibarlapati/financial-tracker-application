@@ -3,7 +3,8 @@ import '../styles/Register.css';
 export function Register(): JSX.Element {
     return (
         <div className="container">
-            <h1 className='app-title'>FinGrow</h1>
+            <p className='app-title'>FinGrow</p>
+            <img src="/assets/app-logo.png" className='app-logo' alt='Logo'></img>
         </div>
     )
 }
