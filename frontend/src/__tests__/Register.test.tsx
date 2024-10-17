@@ -12,8 +12,13 @@ describe("Registration Component", ()=>{
     })
 
     it("Should render application logo",()=>{
-        const appLogo: HTMLImageElement = screen.getByAltText("Logo");
+        const appLogo: HTMLImageElement = screen.getByAltText(/logo/i);
         expect(appLogo).toBeInTheDocument();
         expect(appLogo).toHaveAttribute('src', '/assets/app-logo.png');
+    })
+
+    it("Should render input element with placeholder enter username", ()=>{
+        const usernameInput: HTMLImageElement = screen.getByPlaceholderText("Enter Username");
+        expect(usernameInput).toBeInTheDocument();
     })
 })
