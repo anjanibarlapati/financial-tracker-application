@@ -1,11 +1,14 @@
 
 import { Request, Response } from 'express';
-import { addBudget, addIncome, addSavingsGoal, addTransaction, createUser, isExistingUser, debitAmount, getAllUsers, getUser, updateBudgetAmount, updateBudgetAmountSpent, updateIncomeAmount, updateSavingsGoalAmount } from '../../backend/functions/usersRoutesHandler';
+import { addBudget, addIncome, addSavingsGoal, addTransaction, createUser, isExistingUser, debitAmount, getAllUsers, getUser, updateBudgetAmount, updateBudgetAmountSpent, updateIncomeAmount, updateSavingsGoalAmount, registerUser } from '../../backend/functions/usersRoutesHandler';
 import { User } from '../../backend/models/users';
 import { IUser } from '../interfaces/user';
+import { register } from '../functions/registration';
 
 jest.mock('../../backend/models/users'); 
-
+jest.mock('../functions/registration', () => ({
+    register: jest.fn(),
+}));
 
 describe('User Controller', () => {
     let req: Partial<Request>;
@@ -33,6 +36,7 @@ describe('User Controller', () => {
             json: jest.fn(),
             status: jest.fn().mockReturnThis(),
         };
+        jest.clearAllMocks();
     });
 
     describe('createUser', () => {
@@ -56,6 +60,39 @@ describe('User Controller', () => {
             expect(User.create).toHaveBeenCalledWith(req.body);
             expect(res.status).toHaveBeenCalledWith(500);
             expect(res.json).toHaveBeenCalledWith({ message: 'Error while inserting user' });
+        });
+    });
+
+
+    describe('register user', () => {
+        beforeEach(()=>{
+            req.body = {
+                username: user.username,
+                password: user.password,
+            };
+            jest.clearAllMocks();
+        })
+
+        it('should register a user and return it', async () => {
+
+            const mockedUser = {id:1, ...user};
+            (register as jest.Mock).mockResolvedValue(mockedUser); 
+    
+            await registerUser(req as Request, res as Response);
+    
+            expect(register).toHaveBeenCalledWith(user.username, user.password);
+            expect(res.json).toHaveBeenCalledWith(mockedUser);
+            expect(res.status).not.toHaveBeenCalled();
+        });
+    
+        it('should handle errors and respond with status 500', async () => {
+            (register as jest.Mock).mockRejectedValue(new Error("Error while registering user")); 
+    
+            await registerUser(req as Request, res as Response);
+    
+            expect(register).toHaveBeenCalledWith(user.username, user.password);
+            expect(res.status).toHaveBeenCalledWith(500);
+            expect(res.json).toHaveBeenCalledWith({ message: 'Error while registering user' });
         });
     });
 
