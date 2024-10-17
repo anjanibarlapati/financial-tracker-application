@@ -69,13 +69,17 @@
       npm install
       ```
  ## Usage
+To run the test files, use below command
+   ```bash
+   npm run test
+   ```
 To run the project, use the following commands:
 
-1. To run the backend, go to the directory where the file is located (here backend directory) and execute the following command:
+1. To run the backend execute the following command
    ```bash
-   npx ts-node index.ts
+   npm run dev
    ```
 2. To run the application run below command in different terminal window.
    ```bash
-   npm run test
+   npm run start
    ```

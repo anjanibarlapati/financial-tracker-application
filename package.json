@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "jest --watch --runInBand"
+    "test": "jest --watch --runInBand",
+    "dev": "npx ts-node ./backend/index.ts",
+    "start": "npx ts-node ./src/index.ts"
   },
   "keywords": [],
   "author": "",
