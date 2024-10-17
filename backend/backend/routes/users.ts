@@ -1,8 +1,12 @@
 import express from 'express';
+import { Request, Response } from 'express';
+
 import {
     createUser, getAllUsers, getUser,isExistingUser,  updateBudgetAmountSpent, addTransaction, addIncome, updateIncomeAmount, 
-    debitAmount, addBudget, updateBudgetAmount, addSavingsGoal, updateSavingsGoalAmount
+    debitAmount, addBudget, updateBudgetAmount, addSavingsGoal, updateSavingsGoalAmount,
+    registerUser
 } from '../functions/usersRoutesHandler';
+import { register } from '../../src/functions/registration';
 
 export const userRouter = express.Router();
 
@@ -31,4 +35,6 @@ userRouter.put('/user/updatebudgetamount/:username', updateBudgetAmount);
 userRouter.put('/user/savingsgoal/:username', addSavingsGoal);
 
 userRouter.put('/user/savingsgoalamount/:username', updateSavingsGoalAmount);
+
+userRouter.post('/register/user', registerUser)
 

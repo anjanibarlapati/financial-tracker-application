@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { User } from '../models/users';
+import { register } from '../../src/functions/registration';
 
 export const createUser = async (req: Request, res: Response) => {
     try {
@@ -9,6 +10,17 @@ export const createUser = async (req: Request, res: Response) => {
         res.status(500).json({ message: 'Error while inserting user' });
     }
 };
+
+export const registerUser = async(req:Request, res:Response)=>{
+    try{
+        const username:string = req.body.username;
+        const password:string = req.body.password;
+        const user =  await register(username, password);
+        res.json(user);
+    } catch(error){
+        res.status(500).json({ message: 'Error while registering user' });
+    }
+}
 
 export const getAllUsers = async (req: Request, res: Response) => {
     try {
