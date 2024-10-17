@@ -10,10 +10,27 @@
     color:#216D9F;
     font-size: 50px;
     font-weight: bold;
+    /* background-color: black; */
 }
 
 .app-logo{
     width:10%;
     height:15%;
     object-fit:'fill';
+    /* background-color: red; */
+}
+
+.register-form{
+    display: flex;
+    padding: 10px;
+
+}
+
+.username{
+    border: 2px solid #216D9F;
+    border-radius: 3px;
+    padding: 8px;
+    width:300px;
+    font-size: 15px;
+    color:#a00747;
 }
