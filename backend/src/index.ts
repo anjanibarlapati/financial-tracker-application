@@ -1,10 +1,10 @@
 import promptSync from "prompt-sync";
 import nconf from 'nconf';
-import {  User as UserClass} from "../src/classes/users";
-import { login } from "../src/functions/login";
-import { register } from "../src/functions/registration";
-import { IFinancialReport, IFinancialReportBudget, IFinancialReportSavingsGoal } from "../src/interfaces/financialReport";
-import { IUser } from "../src/interfaces/user";
+import {  User as UserClass} from "./classes/users";
+import { login } from "./functions/login";
+import { register } from "./functions/registration";
+import { IFinancialReport, IFinancialReportBudget, IFinancialReportSavingsGoal } from "./interfaces/financialReport";
+import { IUser } from "./interfaces/user";
 
 const prompt = promptSync();
 nconf.argv().file({ file: '../config.json' });
