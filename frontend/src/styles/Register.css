@@ -1,32 +1,47 @@
 .container{
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: center;
+    align-items: center;
     height: 100vh;
+}
+
+.title-logo{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center; 
+    gap:8px;
+    margin-bottom: -50px;
 }
 
 .app-title{
     color:#216D9F;
-    font-size: 50px;
-    font-weight: bold;
-    /* background-color: black; */
+     font-size: 50px;
+     font-weight: bold;
 }
 
 .app-logo{
-    width:10%;
-    height:15%;
+    width:50px;
+    height:50px;
     object-fit:'fill';
-    /* background-color: red; */
 }
 
+.title{
+    color:#216D9F;
+    font-size: 30px;
+    font-style:italic;
+}
+ 
 .register-form{
     display: flex;
+    flex-direction: column;
     padding: 10px;
-
+    gap:30px;
+    align-items: center;
 }
 
-.username{
+.input{
     border: 2px solid #216D9F;
     border-radius: 3px;
     padding: 8px;
