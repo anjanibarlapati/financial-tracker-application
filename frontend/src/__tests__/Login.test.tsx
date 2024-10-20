@@ -15,5 +15,9 @@ describe("Login Component", () => {
         expect(appLogo).toBeInTheDocument();
         expect(appLogo).toHaveAttribute('src', '/assets/app-logo.png');
     })
+    it("Should render welcome message", () => {
+        const welcomeMessage: HTMLElement = screen.getByText(/welcome back to fingrow!!/i);
+        expect(welcomeMessage).toBeInTheDocument();
+    })
     
 })
