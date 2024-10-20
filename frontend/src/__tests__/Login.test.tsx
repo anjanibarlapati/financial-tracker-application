@@ -50,6 +50,20 @@ describe("Login Component", () => {
     test("Should render login button", ()=>{
         const loginButton = screen.getByText(/login/i);
         expect(loginButton).toBeInTheDocument();
-    })
+    });
+
+    test('Should login user on clicking login button', async () => {
+
+        const usernameInput = screen.getByPlaceholderText(/enter username/i);
+        const passwordInput = screen.getByPlaceholderText(/enter password/i);
+        const loginButton = screen.getByText(/login/i);
+
+        fireEvent.change(usernameInput, { target: { value: 'anjani' } });
+        fireEvent.change(passwordInput, { target: { value: 'anjani123' } });
+        fireEvent.click(loginButton);
+
+        expect(loginButton).toBeInTheDocument();
+        expect(loginUser).toHaveBeenCalledWith("anjani", "anjani123");
+    });
     
 })
