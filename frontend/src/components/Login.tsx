@@ -1,6 +1,10 @@
+import { useState } from 'react';
 import '../styles/Login.css';
 
 export function Login(): JSX.Element {
+
+    const [username, setUsername] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
 
     return (
         <div className="container">
@@ -10,8 +14,8 @@ export function Login(): JSX.Element {
             </div>
             <p className='title'>Welcome back to FinGrow!!</p>
             <div className='login-form'>
-                <input type="text" className="input" placeholder="Enter Username" />
-                <input type="password" className="input" placeholder="Enter Password" />
+            <input type="text" className="input" placeholder="Enter Username" onChange={(e) => setUsername(e.target.value)} />
+            <input type="password" className="input" placeholder="Enter Password" onChange={(e) => setPassword(e.target.value)} />
             </div>   
         </div>
     )
