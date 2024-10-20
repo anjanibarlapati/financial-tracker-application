@@ -1,13 +1,16 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { Register } from '../components/Register';
+import { registerUser } from '../services/user';
 
+jest.mock('../services/user', () => ({
+    registerUser: jest.fn(),
+}));
 
 describe("Registration Component", () => {
 
     beforeEach(() => {
         render(<Register />)
         jest.clearAllMocks();
-        console.log = jest.fn();
     })
     it("Should render fingrow title", () => {
         const appTitle: HTMLElement = screen.getByText(/fingrow/i, { selector: '.app-title' })
@@ -41,5 +44,19 @@ describe("Registration Component", () => {
         expect(usernameInput.value).toBe('anjani');
         expect(passwordInput.value).toBe('anjani123');
     });
-    
+
+    test('Should register user on clicking register button', async () => {
+
+        const usernameInput = screen.getByPlaceholderText(/enter username/i);
+        const passwordInput = screen.getByPlaceholderText(/enter password/i);
+        const registerButton = screen.getByText(/register/i);
+
+        fireEvent.change(usernameInput, { target: { value: 'anjani' } });
+        fireEvent.change(passwordInput, { target: { value: 'anjani123' } });
+        fireEvent.click(registerButton);
+
+        expect(registerButton).toBeInTheDocument();
+        expect(registerUser).toHaveBeenCalledWith("anjani", "anjani123");
+    });
+
 })
