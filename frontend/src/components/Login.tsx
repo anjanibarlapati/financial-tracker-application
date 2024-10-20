@@ -1,6 +1,5 @@
 import '../styles/Login.css';
 
-
 export function Login(): JSX.Element {
 
     return (
@@ -10,7 +9,9 @@ export function Login(): JSX.Element {
                 <img src="/assets/app-logo.png" className='app-logo' alt='Logo'></img>
             </div>
             <p className='title'>Welcome back to FinGrow!!</p>
-           
+            <div className='login-form'>
+                <input type="text" className="input" placeholder="Enter Username" />
+            </div>   
         </div>
     )
 }
