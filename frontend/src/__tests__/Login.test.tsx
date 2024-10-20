@@ -10,6 +10,10 @@ describe("Login Component", () => {
         const appTitle: HTMLElement = screen.getByText(/fingrow/i, { selector: '.app-title' })
         expect(appTitle).toBeInTheDocument();
     })
-
+    it("Should render application logo", () => {
+        const appLogo: HTMLImageElement = screen.getByAltText(/logo/i);
+        expect(appLogo).toBeInTheDocument();
+        expect(appLogo).toHaveAttribute('src', '/assets/app-logo.png');
+    })
     
 })
