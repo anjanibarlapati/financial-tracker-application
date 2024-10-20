@@ -18,6 +18,11 @@ describe("Login Component", () => {
     it("Should render welcome message", () => {
         const welcomeMessage: HTMLElement = screen.getByText(/welcome back to fingrow!!/i);
         expect(welcomeMessage).toBeInTheDocument();
+    });
+
+    it("Should render input element with placeholder enter username", () => {
+        const usernameInput: HTMLImageElement = screen.getByPlaceholderText("Enter Username");
+        expect(usernameInput).toBeInTheDocument();
     })
     
 })
