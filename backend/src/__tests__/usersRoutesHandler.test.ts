@@ -1,9 +1,10 @@
 
 import { Request, Response } from 'express';
-import { addBudget, addIncome, addSavingsGoal, addTransaction, createUser, isExistingUser, debitAmount, getAllUsers, getUser, updateBudgetAmount, updateBudgetAmountSpent, updateIncomeAmount, updateSavingsGoalAmount, registerUser } from '../controllers/usersRoutesHandler';
+import { addBudget, addIncome, addSavingsGoal, addTransaction, createUser, isExistingUser, debitAmount, getAllUsers, getUser, updateBudgetAmount, updateBudgetAmountSpent, updateIncomeAmount, updateSavingsGoalAmount, registerUser, loginUser } from '../controllers/usersRoutesHandler';
 import { User } from '../models/users';
 import { IUser } from '../interfaces/user';
 import { register } from '../functions/registration';
+import { login } from '../functions/login';
 
 jest.mock('../models/users'); 
 jest.mock('../functions/registration', () => ({
@@ -60,39 +61,6 @@ describe('User Controller', () => {
             expect(User.create).toHaveBeenCalledWith(req.body);
             expect(res.status).toHaveBeenCalledWith(500);
             expect(res.json).toHaveBeenCalledWith({ message: 'Error while inserting user' });
-        });
-    });
-
-
-    describe('register user', () => {
-        beforeEach(()=>{
-            req.body = {
-                username: user.username,
-                password: user.password,
-            };
-            jest.clearAllMocks();
-        })
-
-        it('should register a user and return it', async () => {
-
-            const mockedUser = {id:1, ...user};
-            (register as jest.Mock).mockResolvedValue(mockedUser); 
-    
-            await registerUser(req as Request, res as Response);
-    
-            expect(register).toHaveBeenCalledWith(user.username, user.password);
-            expect(res.json).toHaveBeenCalledWith(mockedUser);
-            expect(res.status).not.toHaveBeenCalled();
-        });
-    
-        it('should handle errors and respond with status 500', async () => {
-            (register as jest.Mock).mockRejectedValue(new Error("Error while registering user")); 
-    
-            await registerUser(req as Request, res as Response);
-    
-            expect(register).toHaveBeenCalledWith(user.username, user.password);
-            expect(res.status).toHaveBeenCalledWith(500);
-            expect(res.json).toHaveBeenCalledWith({ message: 'Error while registering user' });
         });
     });
 
@@ -414,6 +382,70 @@ describe('User Controller', () => {
 
             expect(res.status).toHaveBeenCalledWith(500);
             expect(res.json).toHaveBeenCalledWith({ message: 'Error while updating savings goal amount saved of the user' });
+        });
+    });
+
+    describe('register user', () => {
+        beforeEach(()=>{
+            req.body = {
+                username: user.username,
+                password: user.password,
+            };
+            jest.clearAllMocks();
+        })
+
+        it('should register a user and return it', async () => {
+
+            const mockedUser = {id:1, ...user};
+            (register as jest.Mock).mockResolvedValue(mockedUser); 
+    
+            await registerUser(req as Request, res as Response);
+    
+            expect(register).toHaveBeenCalledWith(user.username, user.password);
+            expect(res.json).toHaveBeenCalledWith(mockedUser);
+            expect(res.status).not.toHaveBeenCalled();
+        });
+    
+        it('should handle errors and respond with status 500', async () => {
+            (register as jest.Mock).mockRejectedValue(new Error("Error while registering user")); 
+    
+            await registerUser(req as Request, res as Response);
+    
+            expect(register).toHaveBeenCalledWith(user.username, user.password);
+            expect(res.status).toHaveBeenCalledWith(500);
+            expect(res.json).toHaveBeenCalledWith({ message: 'Error while registering user' });
+        });
+    });
+
+    describe('login user', () => {
+        beforeEach(()=>{
+            req.body = {
+                username: user.username,
+                password: user.password,
+            };
+            jest.clearAllMocks();
+        })
+
+        it('should login a user and return it', async () => {
+
+            const mockedUser = {id:1, ...user};
+            (login as jest.Mock).mockResolvedValue(mockedUser); 
+    
+            await loginUser(req as Request, res as Response);
+    
+            expect(login).toHaveBeenCalledWith(user.username, user.password);
+            expect(res.json).toHaveBeenCalledWith(mockedUser);
+            expect(res.status).not.toHaveBeenCalled();
+        });
+    
+        it('should handle errors while login and respond with status 500', async () => {
+            (login as jest.Mock).mockRejectedValue(new Error("Error while user login in")); 
+    
+            await loginUser(req as Request, res as Response);
+    
+            expect(login).toHaveBeenCalledWith(user.username, user.password);
+            expect(res.status).toHaveBeenCalledWith(500);
+            expect(res.json).toHaveBeenCalledWith({ message: 'Error while user login in' });
         });
     });
 });
