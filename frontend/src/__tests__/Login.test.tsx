@@ -85,5 +85,15 @@ describe("Login Component", () => {
         expect(alertSpy).toHaveBeenCalledWith('User login failed :(');
         alertSpy.mockRestore();
     });
+
+    it("should display the register prompt", () => {
+        const registerPrompt = screen.getByText(/do not have an account??/i);
+        expect(registerPrompt).toBeInTheDocument();
+    });
+
+    it("should display the login link", () => {
+        const registerLink = screen.getByText(/register/i);
+        expect(registerLink).toBeInTheDocument();
+    });
     
 })
