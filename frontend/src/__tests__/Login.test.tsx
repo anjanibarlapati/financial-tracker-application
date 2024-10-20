@@ -65,5 +65,25 @@ describe("Login Component", () => {
         expect(loginButton).toBeInTheDocument();
         expect(loginUser).toHaveBeenCalledWith("anjani", "anjani123");
     });
+
+    test('Should alert user on login failure', async () => {
+        const usernameInput = screen.getByPlaceholderText(/enter username/i);
+        const passwordInput = screen.getByPlaceholderText(/enter password/i);
+        const loginButton = screen.getByText(/login/i);
+        
+        (loginUser as jest.Mock).mockImplementation(()=>{
+            throw new Error('Registration failed')
+        });
+    
+        const alertSpy = jest.spyOn(window, 'alert').mockImplementation(() => {});
+    
+        fireEvent.change(usernameInput, { target: { value: 'anjani' } });
+        fireEvent.change(passwordInput, { target: { value: 'password123' } });
+        
+        fireEvent.click(loginButton);
+        
+        expect(alertSpy).toHaveBeenCalledWith('User login failed :(');
+        alertSpy.mockRestore();
+    });
     
 })
