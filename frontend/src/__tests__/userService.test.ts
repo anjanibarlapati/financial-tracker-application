@@ -51,15 +51,15 @@ describe("Login Route", () => {
     })
 
     it("Should register a new user into the database", async () => {
-        (axios.post as jest.Mock).mockResolvedValue({data:user});
+        (axios.get as jest.Mock).mockResolvedValue({data:user});
         const response = await loginUser("a","a");
-        expect(axios.post).toHaveBeenCalledWith('http://localhost:4321/login/user', {username:"a", password:"a"});
+        expect(axios.get).toHaveBeenCalledWith('http://localhost:4321/login/user', {params:{username:"a", password:"a"}});
         expect(response).toEqual(user);
     });
 
     it("Should handle error when registering a new user", async () => {
 
-        (axios.post as jest.Mock).mockRejectedValue(new Error("Failed to find user"));
+        (axios.get as jest.Mock).mockRejectedValue(new Error("Failed to find user"));
         
         await expect(loginUser("a","a")).rejects.toThrow('Failed to login user');
     });
