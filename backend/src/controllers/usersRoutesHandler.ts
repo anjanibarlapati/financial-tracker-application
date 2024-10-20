@@ -1,6 +1,10 @@
 import { Request, Response } from 'express';
 import { User } from '../models/users';
 import { register } from '../functions/registration';
+import {User as UserClass} from '../classes/users';
+import { login } from '../functions/login';
+
+let user:UserClass; 
 
 export const createUser = async (req: Request, res: Response) => {
     try {
@@ -10,17 +14,6 @@ export const createUser = async (req: Request, res: Response) => {
         res.status(500).json({ message: 'Error while inserting user' });
     }
 };
-
-export const registerUser = async(req:Request, res:Response)=>{
-    try{
-        const username:string = req.body.username;
-        const password:string = req.body.password;
-        const user =  await register(username, password);
-        res.json(user);
-    } catch(error){
-        res.status(500).json({ message: 'Error while registering user' });
-    }
-}
 
 export const getAllUsers = async (req: Request, res: Response) => {
     try {
@@ -179,3 +172,33 @@ export const updateSavingsGoalAmount = async (req: Request, res: Response) => {
         res.status(500).json({ message: 'Error while updating savings goal amount saved of the user' });
     }
 };
+
+export const registerUser = async(req:Request, res:Response)=>{
+    try{
+        const username:string = req.body.username;
+        const password:string = req.body.password;
+        const userDocument =  await register(username, password);
+        user = new UserClass(userDocument.username, userDocument.password);
+        res.json(user);
+    } catch(error){
+        res.status(500).json({ message: 'Error while registering user' });
+    }
+}
+
+export const loginUser = async(req:Request, res:Response)=>{
+    try{
+        const username:string = req.body.username;
+        const password:string = req.body.password;
+        const userDocument= await login(username, password);
+
+        if (userDocument) {
+          user = new UserClass(userDocument.username, userDocument.password);
+          
+          const { _id, __v, ...updatedUser } = userDocument;
+          Object.assign(user, updatedUser);
+        }
+        res.json(user);
+    } catch(error){
+        res.status(500).json({ message: 'Error while user login in' });
+    }
+}

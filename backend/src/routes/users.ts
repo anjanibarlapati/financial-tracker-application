@@ -3,7 +3,8 @@ import express from 'express';
 import {
     createUser, getAllUsers, getUser,isExistingUser,  updateBudgetAmountSpent, addTransaction, addIncome, updateIncomeAmount, 
     debitAmount, addBudget, updateBudgetAmount, addSavingsGoal, updateSavingsGoalAmount,
-    registerUser
+    registerUser,
+    loginUser
 } from '../controllers/usersRoutesHandler';
 
 export const userRouter = express.Router();
@@ -34,5 +35,8 @@ userRouter.put('/user/savingsgoal/:username', addSavingsGoal);
 
 userRouter.put('/user/savingsgoalamount/:username', updateSavingsGoalAmount);
 
-userRouter.post('/register/user', registerUser)
+userRouter.post('/register/user', registerUser);
+
+userRouter.get('/login/user', loginUser);
+
 
