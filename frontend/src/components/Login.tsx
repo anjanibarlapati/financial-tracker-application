@@ -11,6 +11,7 @@ export function Login(): JSX.Element {
             <p className='title'>Welcome back to FinGrow!!</p>
             <div className='login-form'>
                 <input type="text" className="input" placeholder="Enter Username" />
+                <input type="password" className="input" placeholder="Enter Password" />
             </div>   
         </div>
     )
