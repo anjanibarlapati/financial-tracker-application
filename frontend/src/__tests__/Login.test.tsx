@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { Login } from '../components/Login';
 
 describe("Login Component", () => {
@@ -28,6 +28,17 @@ describe("Login Component", () => {
     it("Should render password input field", () => {
         const passwordInput: HTMLImageElement = screen.getByPlaceholderText("Enter Password");
         expect(passwordInput).toBeInTheDocument();
-    })
+    });
+    
+    test('Should allow user to enter username and password', () => {
+        const usernameInput: HTMLInputElement = screen.getByPlaceholderText(/enter username/i);
+        const passwordInput: HTMLInputElement = screen.getByPlaceholderText(/enter password/i);
+
+        fireEvent.change(usernameInput, { target: { value: 'anjani' } });
+        fireEvent.change(passwordInput, { target: { value: 'anjani123' } });
+
+        expect(usernameInput.value).toBe('anjani');
+        expect(passwordInput.value).toBe('anjani123');
+    });
     
 })
