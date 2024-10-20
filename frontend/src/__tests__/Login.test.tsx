@@ -1,10 +1,16 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { Login } from '../components/Login';
+import { loginUser } from '../services/user';
+
+jest.mock('../services/user', () => ({
+    loginUser: jest.fn(),
+}));
 
 describe("Login Component", () => {
 
     beforeEach(() => {
-        render(<Login />)
+        render(<Login />);
+        jest.clearAllMocks();
     })
     it("Should render fingrow title", () => {
         const appTitle: HTMLElement = screen.getByText(/fingrow/i, { selector: '.app-title' })
@@ -40,5 +46,10 @@ describe("Login Component", () => {
         expect(usernameInput.value).toBe('anjani');
         expect(passwordInput.value).toBe('anjani123');
     });
+
+    test("Should render login button", ()=>{
+        const loginButton = screen.getByText(/login/i);
+        expect(loginButton).toBeInTheDocument();
+    })
     
 })
