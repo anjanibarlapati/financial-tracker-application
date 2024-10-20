@@ -49,3 +49,31 @@
     font-size: 15px;
     color:#a00747;
 }
+
+.register{
+    border: 2px solid #216D9F;
+    border-radius: 3px;
+    padding: 8px;
+    width:30%;
+    font-size: 20px;
+    background-color: #216D9F;
+    color: white;
+    font-weight: bold;
+}
+
+.login-body{
+   color:black;
+   display: flex;
+   flex-direction: row;
+   gap: 10px;
+   font-size: large;
+}
+
+.login{
+    color: #216D9F;
+    font-weight: bold;
+}
+.login:hover{
+    color:#c4004b;
+}
+

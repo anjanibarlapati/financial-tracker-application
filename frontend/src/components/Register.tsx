@@ -27,6 +27,7 @@ export function Register(): JSX.Element {
                 <input type="password" className="input" placeholder="Enter Password" onChange={(e) => setPassword(e.target.value)} />
                 <button type="submit" className='register' onClick={async () => await registerHandler()}>Register</button>
             </div>
+            <p className='login-body'>Already have an account?<span className='login' >Login</span> </p>
         </div>
     )
 }
