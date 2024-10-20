@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import { addBudget, addIncome, addSavingsGoal, addTransaction, createUser, isExistingUser, debitAmount, getAllUsers, getUser, updateBudgetAmount, updateBudgetAmountSpent, updateIncomeAmount, updateSavingsGoalAmount, registerUser, loginUser } from '../controllers/usersRoutesHandler';
 import { User } from '../models/users';
 import { IUser } from '../interfaces/user';
+import {User as UserClass} from '../classes/users';
 import { register } from '../functions/registration';
 import { login } from '../functions/login';
 
@@ -10,6 +11,11 @@ jest.mock('../models/users');
 jest.mock('../functions/registration', () => ({
     register: jest.fn(),
 }));
+
+jest.mock('../functions/login', () => ({
+    login: jest.fn(),
+}));
+
 
 describe('User Controller', () => {
     let req: Partial<Request>;
@@ -396,7 +402,7 @@ describe('User Controller', () => {
 
         it('should register a user and return it', async () => {
 
-            const mockedUser = {id:1, ...user};
+            const mockedUser = new UserClass(user.username, user.password);
             (register as jest.Mock).mockResolvedValue(mockedUser); 
     
             await registerUser(req as Request, res as Response);
@@ -419,7 +425,7 @@ describe('User Controller', () => {
 
     describe('login user', () => {
         beforeEach(()=>{
-            req.body = {
+            req.query = {
                 username: user.username,
                 password: user.password,
             };
@@ -428,7 +434,7 @@ describe('User Controller', () => {
 
         it('should login a user and return it', async () => {
 
-            const mockedUser = {id:1, ...user};
+            const mockedUser = new UserClass(user.username, user.password);
             (login as jest.Mock).mockResolvedValue(mockedUser); 
     
             await loginUser(req as Request, res as Response);

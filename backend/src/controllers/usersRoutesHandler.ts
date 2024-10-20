@@ -187,8 +187,8 @@ export const registerUser = async(req:Request, res:Response)=>{
 
 export const loginUser = async(req:Request, res:Response)=>{
     try{
-        const username:string = req.body.username;
-        const password:string = req.body.password;
+        const username:string = String(req.query.username);
+        const password:string = String(req.query.password);
         const userDocument= await login(username, password);
 
         if (userDocument) {
