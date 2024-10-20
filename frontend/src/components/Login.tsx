@@ -14,9 +14,10 @@ export function Login(): JSX.Element {
             </div>
             <p className='title'>Welcome back to FinGrow!!</p>
             <div className='login-form'>
-            <input type="text" className="input" placeholder="Enter Username" onChange={(e) => setUsername(e.target.value)} />
-            <input type="password" className="input" placeholder="Enter Password" onChange={(e) => setPassword(e.target.value)} />
-            </div>   
+                <input type="text" className="input" placeholder="Enter Username" onChange={(e) => setUsername(e.target.value)} />
+                <input type="password" className="input" placeholder="Enter Password" onChange={(e) => setPassword(e.target.value)} />
+                <button type="submit" className='login-button'>Login</button>
+            </div>
         </div>
     )
 }
