@@ -78,4 +78,14 @@ describe("Registration Component", () => {
         expect(alertSpy).toHaveBeenCalledWith('Registering the user failed :(');
         alertSpy.mockRestore();
     });
+
+    it("should display the login prompt", () => {
+        const loginPrompt = screen.getByText(/already have an account\?/i);
+        expect(loginPrompt).toBeInTheDocument();
+    });
+
+    it("should display the login link", () => {
+        const loginLink = screen.getByText(/login/i);
+        expect(loginLink).toBeInTheDocument();
+    });
 })
