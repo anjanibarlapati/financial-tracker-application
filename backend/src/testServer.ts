@@ -24,8 +24,8 @@ export async function start() {
     });
     return server;
    } 
-   catch(Error) {
-     console.log("Error while connectiong to DB or inserting");
+   catch(error) {
+     throw new Error("Error while connectiong to DB or inserting");
    }
 }
 

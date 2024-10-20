@@ -21,12 +21,7 @@ describe("Database connection", ()=>{
     })
 
     test("Should throw an error if database connection fails", async ()=>{
-        const mockError = new Error('Connection failed');
-        (mongoose.connect as jest.Mock).mockRejectedValue(mockError);
-
-        await dbConnection();
-
-        expect(mongoose.connect).toHaveBeenCalledWith("mongodb://localhost:27017/fingrow");
-        expect(console.log).toHaveBeenCalledWith("Unable to connect to the databse", mockError);
+        (mongoose.connect as jest.Mock).mockRejectedValue(new Error('Unable to connect to the database'));
+        await expect(dbConnection()).rejects.toThrow("Unable to connect to the database");
     })
 })

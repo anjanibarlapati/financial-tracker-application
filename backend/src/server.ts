@@ -20,8 +20,8 @@ async function start() {
     await dbConnection();
     await insertUsersData(users);
    } 
-   catch(Error) {
-     console.log("Error while connectiong to DB or inserting");
+   catch(error) {
+    throw new Error("Error while connectiong to DB or inserting");
    }
 }
 
