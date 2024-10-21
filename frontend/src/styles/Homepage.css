@@ -1,9 +1,11 @@
 .homepage-container {
     display: flex;
+    flex:1;
     flex-direction: column;
-    height: 100vh;
-    background-color: #def1ff;
+    height: 100%;
+    background-color: rgba(194, 228, 248, 0.2);
     padding: 55px 55px 55px 55px;
+    gap:50px;
 }
 
 .titles-image {

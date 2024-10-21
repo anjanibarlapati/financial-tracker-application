@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { UserContext } from "../contexts/user";
 import '../styles/Homepage.css';
+import { RecordExpenses } from "./RecordExpenses";
 
 export function Homepage(): JSX.Element {
     const { currentUser } = useContext(UserContext);
@@ -16,6 +17,7 @@ export function Homepage(): JSX.Element {
                     <img src={'/assets/homepage.png'} className="image" alt="app-image"></img>
                 </div>
             </div>
+            <RecordExpenses/>
         </div>
     )
 }
