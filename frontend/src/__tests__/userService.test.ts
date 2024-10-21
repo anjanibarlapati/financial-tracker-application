@@ -1,7 +1,8 @@
 import axios from "axios";
-import { addBudget, addTransaction, loginUser, registerUser } from "../services/user";
+import { addBudget, addSavingsGoal, addTransaction, loginUser, registerUser } from "../services/user";
 import { ITransaction } from "../interfaces/transactions";
 import { IBudget } from "../interfaces/budget";
+import { ISavingsGoal } from "../interfaces/savingsGoals";
 
 jest.mock('axios');
 
@@ -120,5 +121,32 @@ describe("Add Budget Route", () => {
         await expect(addBudget(budget.category, budget.amount)).rejects.toThrow('Error while inserting new budget for the user');
     });
 });
+
+describe("Add Savings Goal Route", () => {
+    const savingsGoal: ISavingsGoal = {
+        title: "Emergency Fund",
+        targetAmount: 1000,
+        currentAmountSaved: 0,
+    };
+
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
+
+    it("Should add a new savings goal", async () => {
+        (axios.put as jest.Mock).mockResolvedValue({ data: savingsGoal });
+        
+        const response = await addSavingsGoal(savingsGoal);
+        expect(axios.put).toHaveBeenCalledWith('http://localhost:4321/addSavingsGoal/', savingsGoal);
+        expect(response).toEqual(savingsGoal);
+    });
+
+    it("Should handle error when adding a new savings goal", async () => {
+        (axios.put as jest.Mock).mockRejectedValue(new Error("Error while inserting new savings goal for the user"));
+        
+        await expect(addSavingsGoal(savingsGoal)).rejects.toThrow('Error while inserting new savings goal for the user');
+    });
+});
+
 
 
