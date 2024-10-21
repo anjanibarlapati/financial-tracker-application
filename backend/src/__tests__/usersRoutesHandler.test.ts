@@ -1,6 +1,6 @@
 
 import { Request, Response } from 'express';
-import { addBudget, addIncome, addSavingsGoal, addTransaction, createUser, isExistingUser, debitAmount, getAllUsers, getUser, updateBudgetAmount, updateBudgetAmountSpent, updateIncomeAmount, updateSavingsGoalAmount, registerUser, loginUser, addTransactionHandler } from '../controllers/usersRoutesHandler';
+import { addBudget, addIncome, addSavingsGoal, addTransaction, createUser, isExistingUser, debitAmount, getAllUsers, getUser, updateBudgetAmount, updateBudgetAmountSpent, updateIncomeAmount, updateSavingsGoalAmount, registerUser, loginUser, addTransactionHandler, addBudgetHandler } from '../controllers/usersRoutesHandler';
 import { User } from '../models/users';
 import { IUser } from '../interfaces/user';
 import { User as UserClass } from '../classes/users';
@@ -500,5 +500,45 @@ describe('User Controller', () => {
 
         });
     });
+
+    describe("Add Budget Handler", () => {
+        let mockBudget = {
+            category: "Groceries",
+            amount: "200"
+        };
+    
+        let user: UserClass;
+    
+        beforeEach(() => {
+            user = new UserClass("abc", "abc"); 
+            jest.clearAllMocks();
+        });
+    
+        it("Should add a new budget and return user", async () => {
+            req.body = mockBudget;
+    
+            const mockedSetBudget = jest.spyOn(UserClass.prototype, 'setBudget').mockImplementation(async () => {});
+    
+            await addBudgetHandler(req as Request, res as Response);
+    
+            expect(mockedSetBudget).toHaveBeenCalledWith(mockBudget.category, mockBudget.amount);
+            expect(res.json).toHaveBeenCalledWith(user);
+            mockedSetBudget.mockRestore();
+        });
+    
+        it("Should handle error when adding a budget", async () => {
+            req.body = mockBudget;
+    
+            const mockedSetBudget = jest.spyOn(UserClass.prototype, 'setBudget').mockRejectedValue(new Error("Error while adding budget"));
+    
+            await addBudgetHandler(req as Request, res as Response);
+    
+            expect(mockedSetBudget).toHaveBeenCalledWith(mockBudget.category, mockBudget.amount);
+            expect(res.status).toHaveBeenCalledWith(500);
+            expect(res.json).toHaveBeenCalledWith({ message: 'Error while adding budget' });
+            mockedSetBudget.mockRestore();
+        });
+    });
+    
 });
 
