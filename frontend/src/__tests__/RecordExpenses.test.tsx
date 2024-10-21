@@ -41,5 +41,12 @@ describe("Record Expenses Component", ()=>{
         const transactionText= screen.getByText(/Add Transaction/i);
         expect(transactionText).toBeInTheDocument();
     });
+
+    test('Should render Create Budget image and text', () => {
+        const budgetImage:HTMLImageElement = screen.getByAltText("budget");
+        const budgetText:HTMLElement= screen.getByText(/Add Transaction/i);
+        expect(budgetImage).toHaveAttribute('src', '/assets/budget.png');
+        expect(budgetText).toBeInTheDocument();
+    });
 })
 
