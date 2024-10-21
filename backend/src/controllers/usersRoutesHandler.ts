@@ -3,6 +3,7 @@ import { User } from '../models/users';
 import { register } from '../functions/registration';
 import {User as UserClass} from '../classes/users';
 import { login } from '../functions/login';
+import { ITransaction } from '../interfaces/transactions';
 
 let user:UserClass; 
 
@@ -200,5 +201,15 @@ export const loginUser = async(req:Request, res:Response)=>{
         res.json(user);
     } catch(error){
         res.status(500).json({ message: 'Error while user login in' });
+    }
+}
+
+export const addTransactionHandler = async(req:Request, res:Response)=>{
+    try{
+       const transaction:ITransaction = req.body;
+       await user.transaction(transaction);
+       res.json(user);
+    } catch(error){
+        res.status(500).json({ message: 'Error while adding transaction' });
     }
 }

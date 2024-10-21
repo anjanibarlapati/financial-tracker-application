@@ -4,7 +4,8 @@ import {
     createUser, getAllUsers, getUser,isExistingUser,  updateBudgetAmountSpent, addTransaction, addIncome, updateIncomeAmount, 
     debitAmount, addBudget, updateBudgetAmount, addSavingsGoal, updateSavingsGoalAmount,
     registerUser,
-    loginUser
+    loginUser,
+    addTransactionHandler
 } from '../controllers/usersRoutesHandler';
 
 export const userRouter = express.Router();
@@ -38,5 +39,7 @@ userRouter.put('/user/savingsgoalamount/:username', updateSavingsGoalAmount);
 userRouter.post('/register/user', registerUser);
 
 userRouter.get('/login/user', loginUser);
+
+userRouter.put('/addTransaction/', addTransactionHandler)
 
 

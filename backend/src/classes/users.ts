@@ -36,8 +36,7 @@ export class User implements IUser {
 
         if (txn.amount <= 0)
             throw new Error("Transaction amount should greater than zero");
-
-        if (txn.category.trim() === '')
+        if (!txn.category || txn.category.trim() === '')
             throw new Error("Transaction category should be non-empty");
 
         if (txn.type === "debit" && txn.amount > this.availableBalance)
