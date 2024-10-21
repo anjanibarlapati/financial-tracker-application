@@ -37,6 +37,9 @@ describe("Record Expenses Component", ()=>{
         const recordExpensesText:HTMLElement = screen.getByText(/record expenses/i);
         expect(recordExpensesText).toBeInTheDocument();
     });
-
+    test('Should render Add Transaction text', () => {
+        const transactionText= screen.getByText(/Add Transaction/i);
+        expect(transactionText).toBeInTheDocument();
+    });
 })
 
