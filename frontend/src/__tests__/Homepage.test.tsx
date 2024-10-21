@@ -34,7 +34,12 @@ describe("Homepage Component", () => {
     })
 
     test("Should render username", () => {
-        const welcomeMessage = screen.getByText(/anjani/i);
+        const welcomeMessage: HTMLElement = screen.getByText(/anjani/i);
         expect(welcomeMessage).toBeInTheDocument();
+    });
+
+    test("Should render title and subtitle", () => {
+        const title: HTMLElement = screen.getByText(/finGrow: track, save and thrive/i);
+        expect(title).toBeInTheDocument();
     });
 })
