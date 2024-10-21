@@ -7,6 +7,7 @@ import reportWebVitals from './reportWebVitals';
 import { Login } from './components/Login';
 import { Register } from './components/Register';
 import { Homepage } from './components/Homepage';
+import { UserProvider } from './contexts/user';
 
 
 const routes = createBrowserRouter([
@@ -34,7 +35,9 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
+    <UserProvider>
       <RouterProvider router={routes} />
+      </UserProvider>
   </React.StrictMode>
 );
 
