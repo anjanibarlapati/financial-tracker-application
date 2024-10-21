@@ -1,17 +1,21 @@
 import { useState } from 'react';
 import '../styles/Register.css';
 import { registerUser } from '../services/user';
+import { useNavigate } from 'react-router-dom';
 
 
 export function Register(): JSX.Element {
     const [username, setUsername] = useState<string>('');
     const [password, setPassword] = useState<string>('');
+    const navigate = useNavigate();
 
-    async  function registerHandler() {
-        try{
-           const user = await registerUser(username, password);
-        } catch(error:any){
-           alert(`Registering the user failed :(`)
+    async function registerHandler() {
+        try {
+            const user = await registerUser(username, password);
+            console.log("User registered");
+            navigate("/homepage");
+        } catch (error: any) {
+            alert(`Registering the user failed :(`)
         }
     }
 
@@ -27,7 +31,7 @@ export function Register(): JSX.Element {
                 <input type="password" className="input" placeholder="Enter Password" onChange={(e) => setPassword(e.target.value)} />
                 <button type="submit" className='register' onClick={async () => await registerHandler()}>Register</button>
             </div>
-            <p className='login-body'>Already have an account?<span className='login' >Login</span> </p>
+            <p className='login-body'>Already have an account?<span className='login' onClick={() => navigate("/login")}>Login</span> </p>
         </div>
     )
 }
