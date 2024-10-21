@@ -1,35 +1,10 @@
 import { fireEvent, render,screen } from "@testing-library/react";
-import { ReactNode } from "react";
-import { UserContext } from "../contexts/user";
 import { RecordExpenses } from "../components/RecordExpenses";
-
-
-const MockUserProvider = ({ children }: { children: ReactNode }) => {
-    const mockCurrentUser = {
-        username: 'anjani',
-        password: 'anjani123',
-        income: [],
-        totalIncome: 0,
-        transactions: [],
-        availableBalance: 0,
-        budgets: [],
-        totalBudget: 0,
-        savingsGoals: []
-    };
-
-    return (
-        <UserContext.Provider value={{ currentUser: mockCurrentUser, setCurrentUser: () => { } }}>
-            {children}
-        </UserContext.Provider>
-    );
-};
 
 describe("Record Expenses Component", ()=>{
     beforeEach(() => {
         render(
-            <MockUserProvider>
-                <RecordExpenses />
-            </MockUserProvider>
+            <RecordExpenses />
         );
     })
 
@@ -55,5 +30,35 @@ describe("Record Expenses Component", ()=>{
         expect(savingsGoalImage).toHaveAttribute('src', '/assets/savings-goals.png');
         expect(savingsGoalText).toBeInTheDocument();
     });
+
+    test("Should render transaction form on clicking add transaction", ()=>{
+        const transactionText= screen.getByText(/add transaction/i);
+        fireEvent.click(transactionText);
+        const transactionForm = screen.getByPlaceholderText(/transaction type/i);
+        expect(transactionForm).toBeInTheDocument();
+
+        expect(screen.queryByTestId('budget-form')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('savings-goal-form')).not.toBeInTheDocument();
+    })
+
+    test("Should render budget form on clicking create budget", ()=>{
+        const budgetText= screen.getByText(/create budget/i);
+        fireEvent.click(budgetText);
+        const budgetForm = screen.getByTestId('budget-form');
+        expect(budgetForm).toBeInTheDocument();
+
+        expect(screen.queryByTestId('transaction-form')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('savings-goal-form')).not.toBeInTheDocument();
+    })
+
+    test("Should render savings goal form on clicking create savings goal", ()=>{
+        const savingsGoalText= screen.getByText(/create savings goal/i);
+        fireEvent.click(savingsGoalText);
+        const savingsGoalForm = screen.getByTestId('savings-goal-form');
+        expect(savingsGoalForm).toBeInTheDocument();
+
+        expect(screen.queryByTestId('transaction-form')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('budget-form')).not.toBeInTheDocument();
+    })
 })
 
