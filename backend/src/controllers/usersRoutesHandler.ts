@@ -213,3 +213,12 @@ export const addTransactionHandler = async(req:Request, res:Response)=>{
         res.status(500).json({ message: 'Error while adding transaction' });
     }
 }
+
+export const addBudgetHandler = async(req:Request, res:Response)=>{
+    try{
+       await user.setBudget(req.body.category, req.body.amount);
+       res.json(user);
+    } catch(error){
+        res.status(500).json({ message: 'Error while adding budget' });
+    }
+}

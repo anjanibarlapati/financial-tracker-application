@@ -5,7 +5,8 @@ import {
     debitAmount, addBudget, updateBudgetAmount, addSavingsGoal, updateSavingsGoalAmount,
     registerUser,
     loginUser,
-    addTransactionHandler
+    addTransactionHandler,
+    addBudgetHandler
 } from '../controllers/usersRoutesHandler';
 
 export const userRouter = express.Router();
@@ -41,5 +42,7 @@ userRouter.post('/register/user', registerUser);
 userRouter.get('/login/user', loginUser);
 
 userRouter.put('/addTransaction/', addTransactionHandler)
+
+userRouter.put('/addBudget/', addBudgetHandler)
 
 
