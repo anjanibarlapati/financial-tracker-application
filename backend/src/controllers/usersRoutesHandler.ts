@@ -222,3 +222,12 @@ export const addBudgetHandler = async(req:Request, res:Response)=>{
         res.status(500).json({ message: 'Error while adding budget' });
     }
 }
+
+export const addSavingsGoalHandler = async(req:Request, res:Response)=>{
+    try{
+       await user.addSavingsGoal(req.body);
+       res.json(user);
+    } catch(error){
+        res.status(500).json({ message: 'Error while adding savings goal' });
+    }
+}
