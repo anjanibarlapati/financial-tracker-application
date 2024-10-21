@@ -1,5 +1,6 @@
 import axios from "axios";
-import { loginUser, registerUser } from "../services/user";
+import { addTransaction, loginUser, registerUser } from "../services/user";
+import { ITransaction } from "../interfaces/transactions";
 
 jest.mock('axios');
 
@@ -62,5 +63,32 @@ describe("Login Route", () => {
         (axios.get as jest.Mock).mockRejectedValue(new Error("Failed to find user"));
         
         await expect(loginUser("a","a")).rejects.toThrow('Failed to login user');
+    });
+});
+describe("Add Transaction Route", () => {
+    let transaction:ITransaction = {
+        id: 1,
+        amount: 100,
+        type: "credit",
+        date: new Date("2024-10-22"),
+        category: "Groceries",
+    };
+
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
+
+    it("Should add a new transaction", async () => {
+        (axios.put as jest.Mock).mockResolvedValue({ data: transaction });
+        
+        const response = await addTransaction(transaction);
+        expect(axios.put).toHaveBeenCalledWith('http://localhost:4321/addTransaction/', transaction);
+        expect(response).toEqual(transaction);
+    });
+
+    it("Should handle error when adding a new transaction", async () => {
+        (axios.put as jest.Mock).mockRejectedValue(new Error("Error while inserting new transaction for the user"));
+        
+        await expect(addTransaction(transaction)).rejects.toThrow('Error while inserting new transaction for the user');
     });
 });
