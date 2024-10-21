@@ -11,19 +11,19 @@ export function RecordExpenses(): JSX.Element {
     const [savingsGoalFormFlag, setSavingsGoalFormFlag] = useState<boolean>(false);
 
     function transactionHandler() {
-        setTransactionFormFlag(true);
+        setTransactionFormFlag(!transactionFormFlag);
         setBudgetFormFlag(false);
         setSavingsGoalFormFlag(false);
     }
 
     function budgetHandler() {
-        setBudgetFormFlag(true);
+        setBudgetFormFlag(!budgetFormFlag);
         setTransactionFormFlag(false);
         setSavingsGoalFormFlag(false);
     }
 
     function savingsGoalsHandler() {
-        setSavingsGoalFormFlag(true);
+        setSavingsGoalFormFlag(!savingsGoalFormFlag);
         setBudgetFormFlag(false);
         setTransactionFormFlag(false);
     }
