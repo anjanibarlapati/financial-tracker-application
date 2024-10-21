@@ -1,13 +1,14 @@
 
 import { Request, Response } from 'express';
-import { addBudget, addIncome, addSavingsGoal, addTransaction, createUser, isExistingUser, debitAmount, getAllUsers, getUser, updateBudgetAmount, updateBudgetAmountSpent, updateIncomeAmount, updateSavingsGoalAmount, registerUser, loginUser } from '../controllers/usersRoutesHandler';
+import { addBudget, addIncome, addSavingsGoal, addTransaction, createUser, isExistingUser, debitAmount, getAllUsers, getUser, updateBudgetAmount, updateBudgetAmountSpent, updateIncomeAmount, updateSavingsGoalAmount, registerUser, loginUser, addTransactionHandler } from '../controllers/usersRoutesHandler';
 import { User } from '../models/users';
 import { IUser } from '../interfaces/user';
-import {User as UserClass} from '../classes/users';
+import { User as UserClass } from '../classes/users';
 import { register } from '../functions/registration';
 import { login } from '../functions/login';
+import { ITransaction } from '../interfaces/transactions';
 
-jest.mock('../models/users'); 
+jest.mock('../models/users');
 jest.mock('../functions/registration', () => ({
     register: jest.fn(),
 }));
@@ -35,7 +36,7 @@ describe('User Controller', () => {
 
     beforeEach(() => {
         req = {
-            body:{
+            body: {
 
             }
         };
@@ -49,21 +50,21 @@ describe('User Controller', () => {
     describe('createUser', () => {
         it('should create a user and return it', async () => {
             req.body = user;
-            const mockedUser = {id:1, ...user};
-            (User.create as jest.Mock).mockResolvedValue(mockedUser); 
-    
+            const mockedUser = { id: 1, ...user };
+            (User.create as jest.Mock).mockResolvedValue(mockedUser);
+
             await createUser(req as Request, res as Response);
-    
+
             expect(User.create).toHaveBeenCalledWith(req.body);
             expect(res.json).toHaveBeenCalledWith(mockedUser);
             expect(res.status).not.toHaveBeenCalled();
         });
-    
+
         it('should handle errors and respond with status 500', async () => {
-            (User.create as jest.Mock).mockRejectedValue(new Error("Error while inserting user")); 
-    
+            (User.create as jest.Mock).mockRejectedValue(new Error("Error while inserting user"));
+
             await createUser(req as Request, res as Response);
-    
+
             expect(User.create).toHaveBeenCalledWith(req.body);
             expect(res.status).toHaveBeenCalledWith(500);
             expect(res.json).toHaveBeenCalledWith({ message: 'Error while inserting user' });
@@ -139,7 +140,7 @@ describe('User Controller', () => {
         it('should update budget amount spent', async () => {
             req.params = { username: 'abc' };
             req.body = { category: 'groceries', amount: 50 };
-            const mockedResult = {...user, budgets:{category: 'groceries', amount: 50, amountSpent:0}};
+            const mockedResult = { ...user, budgets: { category: 'groceries', amount: 50, amountSpent: 0 } };
             (User.findOneAndUpdate as jest.Mock).mockResolvedValue(mockedResult);
 
             await updateBudgetAmountSpent(req as Request, res as Response);
@@ -147,7 +148,7 @@ describe('User Controller', () => {
             expect(User.findOneAndUpdate).toHaveBeenCalledWith(
                 { username: req.params.username, "budgets.category": req.body.category },
                 { $inc: { "budgets.$.amountSpent": req.body.amount } },
-                {new:true}
+                { new: true }
             );
             expect(res.json).toHaveBeenCalledWith(mockedResult);
         });
@@ -165,8 +166,8 @@ describe('User Controller', () => {
     describe('addTransaction', () => {
         it('should add a transaction', async () => {
             req.params = { username: 'user1' };
-            req.body = {id:1, type: "credit", amount:5000, category:"Others", date:new Date() };
-            const mockedResult = {...user, transactions:{id:1, type: "credit", amount:5000, category:"Others", date:"2024-09-05T00:00:00.000Z"}};
+            req.body = { id: 1, type: "credit", amount: 5000, category: "Others", date: new Date() };
+            const mockedResult = { ...user, transactions: { id: 1, type: "credit", amount: 5000, category: "Others", date: "2024-09-05T00:00:00.000Z" } };
             (User.findOneAndUpdate as jest.Mock).mockResolvedValue(mockedResult);
 
             await addTransaction(req as Request, res as Response);
@@ -174,7 +175,7 @@ describe('User Controller', () => {
             expect(User.findOneAndUpdate).toHaveBeenCalledWith(
                 { username: req.params.username },
                 { $push: { transactions: req.body } },
-                {new:true}
+                { new: true }
             );
             expect(res.json).toHaveBeenCalledWith(mockedResult);
         });
@@ -193,7 +194,7 @@ describe('User Controller', () => {
         it('should add income', async () => {
             req.params = { username: 'user1' };
             req.body = { category: 'salary', amount: 2000 };
-            const mockedResult = {message: "Income added successfully"};
+            const mockedResult = { message: "Income added successfully" };
             (User.findOneAndUpdate as jest.Mock).mockResolvedValue(mockedResult);
 
             await addIncome(req as Request, res as Response);
@@ -203,9 +204,9 @@ describe('User Controller', () => {
                 {
                     $push: { income: { source: req.body.category, amount: req.body.amount } },
                     $inc: { availableBalance: req.body.amount, totalIncome: req.body.amount },
-                    
+
                 },
-                {new:true}
+                { new: true }
             );
             expect(res.json).toHaveBeenCalledWith({ message: 'Income added successfully' });
         });
@@ -224,7 +225,7 @@ describe('User Controller', () => {
         it('should update income amount', async () => {
             req.params = { username: 'user1' };
             req.body = { category: 'salary', amount: 500 };
-            const mockedResult = { ...user, income: {source: "salary", amount: 2500}};
+            const mockedResult = { ...user, income: { source: "salary", amount: 2500 } };
             (User.findOneAndUpdate as jest.Mock).mockResolvedValue(mockedResult);
 
             await updateIncomeAmount(req as Request, res as Response);
@@ -234,7 +235,7 @@ describe('User Controller', () => {
                 {
                     $inc: { 'income.$.amount': req.body.amount, availableBalance: req.body.amount, totalIncome: req.body.amount }
                 },
-                {new:true}
+                { new: true }
             );
             expect(res.json).toHaveBeenCalledWith(mockedResult);
         });
@@ -261,7 +262,7 @@ describe('User Controller', () => {
             expect(User.findOneAndUpdate).toHaveBeenCalledWith(
                 { username: req.params.username },
                 { $inc: { availableBalance: -req.body.amount } },
-                {new:true}
+                { new: true }
             );
             expect(res.json).toHaveBeenCalledWith(mockResult);
         });
@@ -280,7 +281,7 @@ describe('User Controller', () => {
         it('should add a budget', async () => {
             req.params = { username: 'user1' };
             req.body = { category: 'food', amount: 300 };
-            const mockResult = { ...user, budgets:{category: 'food', amount: 300} };
+            const mockResult = { ...user, budgets: { category: 'food', amount: 300 } };
             (User.findOneAndUpdate as jest.Mock).mockResolvedValue(mockResult);
 
             await addBudget(req as Request, res as Response);
@@ -291,7 +292,7 @@ describe('User Controller', () => {
                     $push: { budgets: { category: req.body.category, amount: req.body.amount, amountSpent: 0 } },
                     $inc: { totalBudget: req.body.amount }
                 },
-                {new:true}
+                { new: true }
             );
             expect(res.json).toHaveBeenCalledWith(mockResult);
         });
@@ -310,7 +311,7 @@ describe('User Controller', () => {
         it('should update budget amount', async () => {
             req.params = { username: 'user1' };
             req.body = { category: 'food', totalBudget: 200, amount: 200 };
-            const mockResult = { ...user, budgets:{category: 'food', amount: 200, amountSpent:0}, totalBudget:200};
+            const mockResult = { ...user, budgets: { category: 'food', amount: 200, amountSpent: 0 }, totalBudget: 200 };
             (User.findOneAndUpdate as jest.Mock).mockResolvedValue(mockResult);
 
             await updateBudgetAmount(req as Request, res as Response);
@@ -320,7 +321,7 @@ describe('User Controller', () => {
                 {
                     $set: { totalBudget: req.body.totalBudget, "budgets.$.amount": req.body.amount }
                 },
-                {new:true}
+                { new: true }
             );
             expect(res.json).toHaveBeenCalledWith(mockResult);
         });
@@ -339,7 +340,7 @@ describe('User Controller', () => {
         it('should add a savings goal', async () => {
             req.params = { username: 'user1' };
             req.body = { title: 'vacation', amount: 1000 };
-            const mockResult = { ...user, savingsGoals: { title: 'vacation', amount: 1000}};
+            const mockResult = { ...user, savingsGoals: { title: 'vacation', amount: 1000 } };
             (User.findOneAndUpdate as jest.Mock).mockResolvedValue(mockResult);
 
             await addSavingsGoal(req as Request, res as Response);
@@ -349,7 +350,7 @@ describe('User Controller', () => {
                 {
                     $push: { savingsGoals: req.body },
                 },
-                {new:true}
+                { new: true }
             );
             expect(res.json).toHaveBeenCalledWith(mockResult);
         });
@@ -368,7 +369,7 @@ describe('User Controller', () => {
         it('should update savings goal amount', async () => {
             req.params = { username: 'user1' };
             req.body = { title: 'vacation', amount: 300 };
-            const mockResult = { ...user, savingsGoals: { title: 'vacation', amount: 1000, currentAmountSaved:300}};
+            const mockResult = { ...user, savingsGoals: { title: 'vacation', amount: 1000, currentAmountSaved: 300 } };
             (User.findOneAndUpdate as jest.Mock).mockResolvedValue(mockResult);
 
             await updateSavingsGoalAmount(req as Request, res as Response);
@@ -376,7 +377,7 @@ describe('User Controller', () => {
             expect(User.findOneAndUpdate).toHaveBeenCalledWith(
                 { username: req.params.username, "savingsGoals.title": req.body.title },
                 { $inc: { "savingsGoals.$.currentAmountSaved": req.body.amount } },
-                {new:true}
+                { new: true }
             );
             expect(res.json).toHaveBeenCalledWith(mockResult);
         });
@@ -392,7 +393,7 @@ describe('User Controller', () => {
     });
 
     describe('register user', () => {
-        beforeEach(()=>{
+        beforeEach(() => {
             req.body = {
                 username: user.username,
                 password: user.password,
@@ -403,20 +404,20 @@ describe('User Controller', () => {
         it('should register a user and return it', async () => {
 
             const mockedUser = new UserClass(user.username, user.password);
-            (register as jest.Mock).mockResolvedValue(mockedUser); 
-    
+            (register as jest.Mock).mockResolvedValue(mockedUser);
+
             await registerUser(req as Request, res as Response);
-    
+
             expect(register).toHaveBeenCalledWith(user.username, user.password);
             expect(res.json).toHaveBeenCalledWith(mockedUser);
             expect(res.status).not.toHaveBeenCalled();
         });
-    
+
         it('should handle errors and respond with status 500', async () => {
-            (register as jest.Mock).mockRejectedValue(new Error("Error while registering user")); 
-    
+            (register as jest.Mock).mockRejectedValue(new Error("Error while registering user"));
+
             await registerUser(req as Request, res as Response);
-    
+
             expect(register).toHaveBeenCalledWith(user.username, user.password);
             expect(res.status).toHaveBeenCalledWith(500);
             expect(res.json).toHaveBeenCalledWith({ message: 'Error while registering user' });
@@ -424,7 +425,7 @@ describe('User Controller', () => {
     });
 
     describe('login user', () => {
-        beforeEach(()=>{
+        beforeEach(() => {
             req.query = {
                 username: user.username,
                 password: user.password,
@@ -435,23 +436,68 @@ describe('User Controller', () => {
         it('should login a user and return it', async () => {
 
             const mockedUser = new UserClass(user.username, user.password);
-            (login as jest.Mock).mockResolvedValue(mockedUser); 
-    
+            (login as jest.Mock).mockResolvedValue(mockedUser);
+
             await loginUser(req as Request, res as Response);
-    
+
             expect(login).toHaveBeenCalledWith(user.username, user.password);
             expect(res.json).toHaveBeenCalledWith(mockedUser);
             expect(res.status).not.toHaveBeenCalled();
         });
-    
+
         it('should handle errors while login and respond with status 500', async () => {
-            (login as jest.Mock).mockRejectedValue(new Error("Error while user login in")); 
-    
+            (login as jest.Mock).mockRejectedValue(new Error("Error while user login in"));
+
             await loginUser(req as Request, res as Response);
-    
+
             expect(login).toHaveBeenCalledWith(user.username, user.password);
             expect(res.status).toHaveBeenCalledWith(500);
             expect(res.json).toHaveBeenCalledWith({ message: 'Error while user login in' });
+        });
+    });
+
+    
+    describe("Add Transaction Handler", () => {
+        let mockTransaction: ITransaction = {
+            id: 1,
+            amount: 100,
+            type: "credit",
+            date: new Date("2024-10-22"),
+            category: "Groceries",
+        };
+
+        let user: UserClass;
+
+        beforeEach(() => {
+            user = new UserClass("abc", "abc"); 
+            jest.clearAllMocks();
+        });
+
+        it("Should add a new transaction and return user", async () => {
+            req.body = mockTransaction;
+
+            const mockedAddTransaction = jest.spyOn(UserClass.prototype, 'transaction').mockImplementation(async () => {});
+
+            await addTransactionHandler(req as Request, res as Response);
+
+            expect(mockedAddTransaction).toHaveBeenCalledWith(mockTransaction);
+            expect(res.json).toHaveBeenCalledWith(user);
+            mockedAddTransaction.mockRestore();
+
+        });
+
+        it("Should handle error when adding a transaction", async () => {
+            req.body = mockTransaction;
+
+            const mockedAddTransaction = jest.spyOn(UserClass.prototype, 'transaction').mockRejectedValue(new Error("Error while adding transaction"));
+
+            await addTransactionHandler(req as Request, res as Response);
+
+            expect(mockedAddTransaction).toHaveBeenCalledWith(mockTransaction);
+            expect(res.status).toHaveBeenCalledWith(500);
+            expect(res.json).toHaveBeenCalledWith({ message: 'Error while adding transaction' });
+            mockedAddTransaction.mockRestore();
+
         });
     });
 });
