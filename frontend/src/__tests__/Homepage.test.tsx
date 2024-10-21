@@ -42,4 +42,10 @@ describe("Homepage Component", () => {
         const title: HTMLElement = screen.getByText(/finGrow: track, save and thrive/i);
         expect(title).toBeInTheDocument();
     });
+
+    it("Should render application image", () => {
+        const appImage: HTMLImageElement = screen.getByAltText(/app-image/i);
+        expect(appImage).toBeInTheDocument();
+        expect(appImage).toHaveAttribute('src', '/assets/homepage.png');
+    })
 })
