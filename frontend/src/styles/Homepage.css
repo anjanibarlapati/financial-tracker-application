@@ -14,3 +14,9 @@
 .username{
     font-weight: bold;
 }
+
+.title-subtitle{
+    color: #216D9F;
+    font-weight: bold;
+    font-style: italic;
+}
