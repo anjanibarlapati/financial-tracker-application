@@ -27,3 +27,12 @@ export async function addTransaction(transaction:ITransaction){
         throw new Error('Error while inserting new transaction for the user');
     }
 }
+
+export async function addBudget(category:string, amount:number){
+    try {
+        const response = await axios.put(`http://localhost:4321/addBudget/`, {category:category, amount:amount});
+        return response.data;
+    } catch (error) {
+        throw new Error('Error while inserting new budget for the user');
+    }
+}
