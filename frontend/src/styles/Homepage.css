@@ -1,0 +1,16 @@
+.homepage-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+    background-color:#def1ff;
+    padding: 15px 15px 15px 15px;
+}
+
+.welcome-message{
+    color:#216D9F;
+}
+
+.username{
+    font-weight: bold;
+}
