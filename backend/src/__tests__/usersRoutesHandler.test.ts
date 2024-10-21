@@ -1,12 +1,13 @@
 
 import { Request, Response } from 'express';
-import { addBudget, addIncome, addSavingsGoal, addTransaction, createUser, isExistingUser, debitAmount, getAllUsers, getUser, updateBudgetAmount, updateBudgetAmountSpent, updateIncomeAmount, updateSavingsGoalAmount, registerUser, loginUser, addTransactionHandler, addBudgetHandler } from '../controllers/usersRoutesHandler';
+import { addBudget, addIncome, addSavingsGoal, addTransaction, createUser, isExistingUser, debitAmount, getAllUsers, getUser, updateBudgetAmount, updateBudgetAmountSpent, updateIncomeAmount, updateSavingsGoalAmount, registerUser, loginUser, addTransactionHandler, addBudgetHandler, addSavingsGoalHandler } from '../controllers/usersRoutesHandler';
 import { User } from '../models/users';
 import { IUser } from '../interfaces/user';
 import { User as UserClass } from '../classes/users';
 import { register } from '../functions/registration';
 import { login } from '../functions/login';
 import { ITransaction } from '../interfaces/transactions';
+import { ISavingsGoal } from '../interfaces/savingsGoals';
 
 jest.mock('../models/users');
 jest.mock('../functions/registration', () => ({
@@ -539,6 +540,47 @@ describe('User Controller', () => {
             mockedSetBudget.mockRestore();
         });
     });
+
+    describe("Add Savings Goal Handler", () => {
+        let mockSavingsGoal:ISavingsGoal = {
+            title: "Emergency Fund",
+            targetAmount: 1000,
+            currentAmountSaved: 0,
+        };
+    
+        let user: UserClass;
+    
+        beforeEach(() => {
+            user = new UserClass("abc", "abc"); 
+            jest.clearAllMocks();
+        });
+    
+        it("Should add a new savings goal and return user", async () => {
+            req.body = mockSavingsGoal;
+    
+            const mockedAddSavingsGoal = jest.spyOn(UserClass.prototype, 'addSavingsGoal').mockImplementation(async () => {});
+    
+            await addSavingsGoalHandler(req as Request, res as Response);
+    
+            expect(mockedAddSavingsGoal).toHaveBeenCalledWith(mockSavingsGoal);
+            expect(res.json).toHaveBeenCalledWith(user);
+            mockedAddSavingsGoal.mockRestore();
+        });
+    
+        it("Should handle error when adding a savings goal", async () => {
+            req.body = mockSavingsGoal;
+    
+            const mockedAddSavingsGoal = jest.spyOn(UserClass.prototype, 'addSavingsGoal').mockRejectedValue(new Error("Error while adding savings goal"));
+    
+            await addSavingsGoalHandler(req as Request, res as Response);
+    
+            expect(mockedAddSavingsGoal).toHaveBeenCalledWith(mockSavingsGoal);
+            expect(res.status).toHaveBeenCalledWith(500);
+            expect(res.json).toHaveBeenCalledWith({ message: 'Error while adding savings goal' });
+            mockedAddSavingsGoal.mockRestore();
+        });
+    });
+    
     
 });
 
