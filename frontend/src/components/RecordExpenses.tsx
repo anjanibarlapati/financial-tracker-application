@@ -18,6 +18,12 @@ export function RecordExpenses(): JSX.Element {
                         <h3 className="icon-title">Create Budget</h3>
                     </div>
                 </div>
+                <div className="icon-container">
+                    <div className="icon-body">
+                        <img src={'/assets/savings-goals.png'} alt="savings-goals" className="record-expenses-icon"></img>
+                        <h3 className="icon-title">Create Savings Goal</h3>
+                    </div>
+                </div>
             </div>
         </div>
     )
