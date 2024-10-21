@@ -1,18 +1,21 @@
-import {  useState } from 'react';
+import {  useContext, useState } from 'react';
 import '../styles/Login.css';
 import { loginUser } from '../services/user';
 import { useNavigate } from 'react-router-dom';
+import { UserContext } from '../contexts/user';
 
 export function Login(): JSX.Element {
 
     const [username, setUsername] = useState<string>('');
     const [password, setPassword] = useState<string>('');
+    const {setCurrentUser} = useContext(UserContext);
     const navigate = useNavigate();
 
     async function loginHandler() {
         try {
             const user = await loginUser(username, password);
-            navigate("/homepage")
+            setCurrentUser(user);
+            navigate("/homepage");
         } catch (error: any) {
             alert(`User login failed :(`)
         }
