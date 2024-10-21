@@ -1,21 +1,46 @@
-.homepage-container{
+.homepage-container {
     display: flex;
     flex-direction: column;
-    align-items: center;
     height: 100vh;
-    background-color:#def1ff;
-    padding: 15px 15px 15px 15px;
+    background-color: #def1ff;
+    padding: 55px 55px 55px 55px;
 }
 
-.welcome-message{
-    color:#216D9F;
+.titles-image {
+    display: flex;
+    flex-direction: row; 
+    align-items: center; 
+    justify-content: space-evenly;
 }
 
-.username{
+.titles-body{
+    flex: 1;
+}
+
+.image-body{
+    flex: 1;
+    display: flex; 
+    justify-content: center;
+} 
+
+.image {
+    height:60%; 
+    width: 90%;
+    object-fit: fill;
+    border: 1px solid #216D9F;
+    border-radius: 40px;
+}
+
+.welcome-message {
+    color: #216D9F;
+}
+
+.username {
     font-weight: bold;
+    color: #c4004b;
 }
 
-.title-subtitle{
+.title-subtitle {
     color: #216D9F;
     font-weight: bold;
     font-style: italic;

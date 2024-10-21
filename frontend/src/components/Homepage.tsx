@@ -7,8 +7,15 @@ export function Homepage(): JSX.Element {
 
     return (
         <div className="homepage-container">
-            <h1 className="welcome-message">Welcome <span className="username">{currentUser.username.toUpperCase()}</span></h1>
-            <h2 className="title-subtitle">FinGrow: Track, Save and Thrive</h2>
+            <div className="titles-image">
+                <div className="titles-body">
+                    <h1 className="welcome-message">Welcome <span className="username">{currentUser.username.toUpperCase()}</span></h1>
+                    <h1 className="title-subtitle">FinGrow: Track, Save and Thrive</h1>
+                </div>
+                <div className="image-body">
+                    <img src={'/assets/homepage.png'} className="image" alt="app-image"></img>
+                </div>
+            </div>
         </div>
     )
 }
