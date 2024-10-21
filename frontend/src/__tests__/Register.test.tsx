@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { BrowserRouter, useNavigate  } from 'react-router-dom';
 import { Register } from '../components/Register';
 import { registerUser } from '../services/user';
 
@@ -6,10 +7,21 @@ jest.mock('../services/user', () => ({
     registerUser: jest.fn(),
 }));
 
+const mockNavigate = jest.fn();
+
+jest.mock('react-router-dom', () => ({
+    ...jest.requireActual('react-router-dom'),
+    useNavigate: () => mockNavigate,
+}));
+
 describe("Registration Component", () => {
 
     beforeEach(() => {
-        render(<Register />)
+        render(
+            <BrowserRouter>
+                <Register />
+            </BrowserRouter>
+        );
         jest.clearAllMocks();
     })
     it("Should render fingrow title", () => {
@@ -63,18 +75,18 @@ describe("Registration Component", () => {
         const usernameInput = screen.getByPlaceholderText(/enter username/i);
         const passwordInput = screen.getByPlaceholderText(/enter password/i);
         const registerButton = screen.getByText(/register/i);
-        
-        (registerUser as jest.Mock).mockImplementation(()=>{
+
+        (registerUser as jest.Mock).mockImplementation(() => {
             throw new Error('Registration failed')
         });
-    
-        const alertSpy = jest.spyOn(window, 'alert').mockImplementation(() => {});
-    
+
+        const alertSpy = jest.spyOn(window, 'alert').mockImplementation(() => { });
+
         fireEvent.change(usernameInput, { target: { value: 'anjani' } });
         fireEvent.change(passwordInput, { target: { value: 'password123' } });
-        
+
         fireEvent.click(registerButton);
-        
+
         expect(alertSpy).toHaveBeenCalledWith('Registering the user failed :(');
         alertSpy.mockRestore();
     });
@@ -87,5 +99,31 @@ describe("Registration Component", () => {
     it("should display the login link", () => {
         const loginLink = screen.getByText(/login/i);
         expect(loginLink).toBeInTheDocument();
+    });
+
+    test('Should navigate to homepage after successful registration', async () => {
+        (registerUser as jest.Mock).mockResolvedValueOnce({});
+    
+        const usernameInput = screen.getByPlaceholderText(/enter username/i);
+        const passwordInput = screen.getByPlaceholderText(/enter password/i);
+        const registerButton = screen.getByText(/register/i);
+    
+        fireEvent.change(usernameInput, { target: { value: 'anjani' } });
+        fireEvent.change(passwordInput, { target: { value: 'anjani123' } });
+    
+        fireEvent.click(registerButton);
+    
+        await waitFor(() => {
+            expect(mockNavigate).toHaveBeenCalledWith("/homepage");
+        });
+    });
+    
+    it("should navigate to the login page when login link is clicked", () => {
+        const loginLink = screen.getByText(/login/i);
+        waitFor(()=>{
+            fireEvent.click(loginLink);
+
+        })
+        expect(mockNavigate).toHaveBeenCalledWith("/login");
     });
 })
