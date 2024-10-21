@@ -1,6 +1,7 @@
 import axios from "axios";
-import { addTransaction, loginUser, registerUser } from "../services/user";
+import { addBudget, addTransaction, loginUser, registerUser } from "../services/user";
 import { ITransaction } from "../interfaces/transactions";
+import { IBudget } from "../interfaces/budget";
 
 jest.mock('axios');
 
@@ -65,6 +66,7 @@ describe("Login Route", () => {
         await expect(loginUser("a","a")).rejects.toThrow('Failed to login user');
     });
 });
+
 describe("Add Transaction Route", () => {
     let transaction:ITransaction = {
         id: 1,
@@ -92,3 +94,31 @@ describe("Add Transaction Route", () => {
         await expect(addTransaction(transaction)).rejects.toThrow('Error while inserting new transaction for the user');
     });
 });
+
+describe("Add Budget Route", () => {
+    const budget:IBudget = {
+        category: "Groceries",
+        amount: 200,
+        amountSpent: 0 
+    };
+
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
+
+    it("Should add a new budget", async () => {
+        (axios.put as jest.Mock).mockResolvedValue({ data: budget });
+        
+        const response = await addBudget(budget.category, budget.amount);
+        expect(axios.put).toHaveBeenCalledWith('http://localhost:4321/addBudget/', { category: budget.category, amount: budget.amount });
+        expect(response).toEqual(budget);
+    });
+
+    it("Should handle error when adding a new budget", async () => {
+        (axios.put as jest.Mock).mockRejectedValue(new Error("Error while inserting new budget for the user"));
+        
+        await expect(addBudget(budget.category, budget.amount)).rejects.toThrow('Error while inserting new budget for the user');
+    });
+});
+
+
