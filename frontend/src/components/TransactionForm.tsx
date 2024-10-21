@@ -9,7 +9,7 @@ export function TransactionForm(): JSX.Element {
     const [date, setDate] = useState<string>('');
 
     return(
-        <div className="transaction-form-container">
+        <div className="transaction-form-container" data-testid='transaction-form'>
             <input type="text" className="transaction-input" placeholder="Transaction type" onChange={(event)=>setTransactionType(event.target.value)}></input>
             <input type="text" className="transaction-input" placeholder="Amount" onChange={(event)=>setAmount(Number(event.target.value))}></input>
             <input type="text" className="transaction-input" placeholder="Category" onChange={(event)=>setCategory(event.target.value)}></input>

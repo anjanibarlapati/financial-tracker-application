@@ -9,7 +9,7 @@ describe('BudgetForm Component', () => {
     test('renders all input fields and the Add button', () => {
         const categoryInput: HTMLElement = screen.getByPlaceholderText(/category/i);
         const amountInput: HTMLElement = screen.getByPlaceholderText(/amount/i);
-        const addButton: HTMLElement = screen.getByRole('button', { name: /Add/i });
+        const addButton: HTMLElement = screen.getByRole('button', { name: /create/i });
 
         expect(categoryInput).toBeInTheDocument();
         expect(amountInput).toBeInTheDocument();
