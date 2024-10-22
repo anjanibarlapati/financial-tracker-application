@@ -6,6 +6,8 @@ export interface IFinancialReportBudget  {
 
 export interface IFinancialReportSavingsGoal  {
     title:string;
+    targetAmount:number;
+    currentAmountSaved:number;
     progress: string;
 }
 
