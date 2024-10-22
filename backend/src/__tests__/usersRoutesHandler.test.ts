@@ -1,6 +1,6 @@
 
 import { Request, Response } from 'express';
-import { addBudget, addIncome, addSavingsGoal, addTransaction, createUser, isExistingUser, debitAmount, getAllUsers, getUser, updateBudgetAmount, updateBudgetAmountSpent, updateIncomeAmount, updateSavingsGoalAmount, registerUser, loginUser, addTransactionHandler, addBudgetHandler, addSavingsGoalHandler, generateTotalIncomeAndExpenses } from '../controllers/usersRoutesHandler';
+import { addBudget, addIncome, addSavingsGoal, addTransaction, createUser, isExistingUser, debitAmount, getAllUsers, getUser, updateBudgetAmount, updateBudgetAmountSpent, updateIncomeAmount, updateSavingsGoalAmount, registerUser, loginUser, addTransactionHandler, addBudgetHandler, addSavingsGoalHandler, generateTotalIncomeAndExpenses, generateBudgetSummary, generateSavingsGoalsProgressReport } from '../controllers/usersRoutesHandler';
 import { User } from '../models/users';
 import { IUser } from '../interfaces/user';
 import { User as UserClass } from '../classes/users';
@@ -8,7 +8,7 @@ import { register } from '../functions/registration';
 import { login } from '../functions/login';
 import { ITransaction } from '../interfaces/transactions';
 import { ISavingsGoal } from '../interfaces/savingsGoals';
-import { IFinancialReport } from '../interfaces/financialReport';
+import { IFinancialReportBudget, IFinancialReportSavingsGoal } from '../interfaces/financialReport';
 
 jest.mock('../models/users');
 jest.mock('../functions/registration', () => ({
@@ -613,7 +613,7 @@ describe('User Controller', () => {
         it("Should handle error when generating total income and expenses", async () => {
     
             jest.spyOn(UserClass.prototype, 'totalIncomeAndExpenses').mockImplementation(() => {
-                throw new Error("Error while calculating");
+                throw new Error("Error while generating total income and expenses report of the user");
             });
             await generateTotalIncomeAndExpenses(req as Request, res as Response);
     
@@ -622,7 +622,98 @@ describe('User Controller', () => {
             expect(res.json).toHaveBeenCalledWith({ message: 'Error while generating total income and expenses report of the user' });
         });
     });
+
+    describe("Generate Budget Summary Handler", () => {
+;
+        let user: UserClass;
     
+        beforeEach(() => {
+            req = {
+                query: {
+                    fromDate: "2024-01-01",
+                    toDate: "2024-01-31",
+                },
+            };
+            user = new UserClass("abc", "abc");
+            jest.clearAllMocks();
+        });
+    
+        it("Should generate budget summary and return the report", async () => {
+            const mockReport: IFinancialReportBudget[] = [
+                { category: 'Travel', amount: 1000, amountSpent: 350 },
+                { category: 'Groceries', amount: 10000, amountSpent: 3800 },
+                { category: 'Entertainment', amount: 5000, amountSpent: 700 }
+            ]
+        
+    
+            jest.spyOn(UserClass.prototype, 'budgetSummary').mockReturnValue(mockReport);
+    
+            await generateBudgetSummary(req as Request, res as Response);
+    
+            expect(user.budgetSummary).toHaveBeenCalledWith(new Date("2024-01-01"), new Date("2024-01-31"));
+            expect(res.json).toHaveBeenCalledWith(mockReport);
+        });
+    
+        it("Should handle error when generating budget summary", async () => {
+            jest.spyOn(UserClass.prototype, 'budgetSummary').mockImplementation(() => {
+                throw new Error("Error while generating budget summary report of the user");
+            });
+    
+            await generateBudgetSummary(req as Request, res as Response);
+    
+            expect(user.budgetSummary).toHaveBeenCalledWith(new Date("2024-01-01"), new Date("2024-01-31"));
+            expect(res.status).toHaveBeenCalledWith(500);
+            expect(res.json).toHaveBeenCalledWith({ message: 'Error while generating budget summary report of the user' });
+        });
+    });
+
+    describe("Generate Savings Goals Progress Report Handler", () => {
+        let req: Partial<Request>;
+        let res: Partial<Response>;
+        let user: UserClass;
+    
+        beforeEach(() => {
+            req = {
+                query: {
+                    fromDate: "2024-01-01",
+                    toDate: "2024-01-31",
+                },
+            };
+            user = new UserClass("abc", "abc");
+            res = {
+                json: jest.fn(),
+                status: jest.fn().mockReturnThis(),
+            };
+            jest.clearAllMocks();
+        });
+    
+        it("Should generate savings goals progress report and return the report", async () => {
+            const mockReport: IFinancialReportSavingsGoal[] = [
+                { title: 'Travel', targetAmount: 2000, currentAmountSaved: 500, progress: '25.0%' },
+                { title: 'Home', targetAmount: 5000, currentAmountSaved: 600, progress: '12.0%' },
+                { title: 'Emergency Fund', targetAmount: 1000, currentAmountSaved: 950, progress: '95.0%' }
+            ]
+    
+            jest.spyOn(UserClass.prototype, 'savingsGoalsProgress').mockReturnValue(mockReport);
+    
+            await generateSavingsGoalsProgressReport(req as Request, res as Response);
+    
+            expect(user.savingsGoalsProgress).toHaveBeenCalledWith(new Date("2024-01-01"), new Date("2024-01-31"));
+            expect(res.json).toHaveBeenCalledWith(mockReport);
+        });
+    
+        it("Should handle error when generating savings goals progress report", async () => {
+            jest.spyOn(UserClass.prototype, 'savingsGoalsProgress').mockImplementation(() => {
+                throw new Error("Error while generating savings goals progress report of the user");
+            });
+    
+            await generateSavingsGoalsProgressReport(req as Request, res as Response);
+    
+            expect(user.savingsGoalsProgress).toHaveBeenCalledWith(new Date("2024-01-01"), new Date("2024-01-31"));
+            expect(res.status).toHaveBeenCalledWith(500);
+            expect(res.json).toHaveBeenCalledWith({ message: 'Error while generating savings goals progress report of the user' });
+        });
+    });
     
 });
 
