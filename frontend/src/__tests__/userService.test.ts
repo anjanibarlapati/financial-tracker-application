@@ -1,5 +1,5 @@
 import axios from "axios";
-import { addBudget, addSavingsGoal, addTransaction, loginUser, registerUser } from "../services/user";
+import { addBudget, addSavingsGoal, addTransaction, generateTotalIncomeAndExpenses, loginUser, registerUser } from "../services/user";
 import { ITransaction } from "../interfaces/transactions";
 import { IBudget } from "../interfaces/budget";
 import { ISavingsGoal } from "../interfaces/savingsGoals";
@@ -145,6 +145,35 @@ describe("Add Savings Goal Route", () => {
         (axios.put as jest.Mock).mockRejectedValue(new Error("Error while inserting new savings goal for the user"));
         
         await expect(addSavingsGoal(savingsGoal)).rejects.toThrow('Error while inserting new savings goal for the user');
+    });
+});
+
+describe("Generate Total Income and Expenses Route", () => {
+    const fromDate = new Date("2024-01-01");
+    const toDate = new Date("2024-01-31");
+    const mockResponse = {
+        totalIncome: 5000,
+        totalExpenses: 2000,
+    };
+
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
+
+    it("Should generate total income and expenses", async () => {
+        (axios.get as jest.Mock).mockResolvedValue({ data: mockResponse });
+
+        const response = await generateTotalIncomeAndExpenses(fromDate, toDate);
+        expect(axios.get).toHaveBeenCalledWith('http://localhost:4321/generate/total-income-expenses', {
+            params: { fromDate, toDate },
+        });
+        expect(response).toEqual(mockResponse);
+    });
+
+    it("Should handle error when generating total income and expenses", async () => {
+        (axios.get as jest.Mock).mockRejectedValue(new Error("Error while generating total income and expenses report of the user"));
+
+        await expect(generateTotalIncomeAndExpenses(fromDate, toDate)).rejects.toThrow('Error while generating total income and expenses report of the user');
     });
 });
 
