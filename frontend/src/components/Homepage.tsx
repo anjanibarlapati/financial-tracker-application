@@ -2,6 +2,8 @@ import { useContext } from "react";
 import { UserContext } from "../contexts/user";
 import '../styles/Homepage.css';
 import { RecordExpenses } from "./RecordExpenses";
+import { RecentTransactions } from "./RecentTransactions";
+import { Reports } from "./Reports";
 
 export function Homepage(): JSX.Element {
     const { currentUser } = useContext(UserContext);
@@ -18,6 +20,8 @@ export function Homepage(): JSX.Element {
                 </div>
             </div>
             <RecordExpenses/>
+            <RecentTransactions/>
+            <Reports/>
         </div>
     )
 }
