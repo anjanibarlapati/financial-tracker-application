@@ -55,3 +55,21 @@ export async function generateTotalIncomeAndExpenses(fromDate: Date, toDate: Dat
         throw new Error('Error while generating total income and expenses report of the user');
     }
 }
+
+export async function generateBudgetSummary(fromDate: Date, toDate: Date) {
+    try {
+        const response = await axios.get(`http://localhost:4321/generate/budget-summary`, { params: { fromDate: fromDate, toDate: toDate } });
+        return response.data;
+    } catch (error) {
+        throw new Error('Error while generating budget summary report of the user');
+    }
+}
+
+export async function generateSavingsGoalsProgressReport(fromDate: Date, toDate: Date) {
+    try {
+        const response = await axios.get(`http://localhost:4321/generate/savings-goals-progress`, { params: { fromDate: fromDate, toDate: toDate } });
+        return response.data;
+    } catch (error) {
+        throw new Error('Error while generating savings goals progress report of the user');
+    }
+}
