@@ -1,5 +1,6 @@
 export interface IFinancialReportBudget  {
     category:string;
+    amount:number;
     amountSpent:number;
 }
 
