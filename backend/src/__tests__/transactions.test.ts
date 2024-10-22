@@ -32,8 +32,8 @@ describe("Transactions Functionality",()=>{
 
     test("Should credit given amount when all correct details are provided",async ()=>{
 
-        const txn:ITransaction = {id:user.transactions.length+1, type: "credit", amount:10000, category:"Salary", date:new Date()};
-        await user.transaction(txn);
+        const transaction:ITransaction = {id:user.transactions.length+1, type: "credit", amount:10000, category:"Salary", date:new Date()};
+        await user.transaction(transaction);
 
         expect(user.availableBalance).toBe(10000);  
         expect(user.totalIncome).toBe(10000);
@@ -41,10 +41,10 @@ describe("Transactions Functionality",()=>{
 
     test("Should add credit amount to income if such category exists",async ()=>{
         
-        const txn1:ITransaction = {id:user.transactions.length+1, type: "credit", amount:5000, category:"Others", date:new Date()};
-        await user.transaction(txn1);
-        const txn2:ITransaction = {id:user.transactions.length+1, type: "credit", amount:5000, category:"Others", date:new Date()}
-        await user.transaction(txn2);
+        const transaction1:ITransaction = {id:user.transactions.length+1, type: "credit", amount:5000, category:"Others", date:new Date()};
+        await user.transaction(transaction1);
+        const transaction2:ITransaction = {id:user.transactions.length+1, type: "credit", amount:5000, category:"Others", date:new Date()}
+        await user.transaction(transaction2);
         expect(user.availableBalance).toBe(20000);  
         expect(user.totalIncome).toBe(20000);
     });
@@ -52,10 +52,10 @@ describe("Transactions Functionality",()=>{
     test("Should debit given amount when all correct details are provided", async ()=>{
         await user.setBudget("Groceries", 2000);
 
-        const txn:ITransaction = {id:user.transactions.length+1, type: "debit", amount:1000, category:"Groceries", date:new Date()}
-        await user.transaction(txn);  
+        const transaction:ITransaction = {id:user.transactions.length+1, type: "debit", amount:1000, category:"Groceries", date:new Date()}
+        await user.transaction(transaction);  
 
-        const budget = user.budgets.find(b=>b.category=== txn.category);
+        const budget = user.budgets.find(budget=>budget.category=== transaction.category);
 
         expect(budget?.amountSpent).toBe(1000);
         expect(user.availableBalance).toBe(19000);   
@@ -63,30 +63,53 @@ describe("Transactions Functionality",()=>{
 
     test("should throw an error when debit amount is more than the available balance", async () => {
 
-        const txn:ITransaction = {id:user.transactions.length+1, type: "debit", amount:100000, category:"Groceries", date:new Date()}
-        await expect(user.transaction( txn)).rejects.toThrow("Insufficient balance");
+        const transaction:ITransaction = {id:user.transactions.length+1, type: "debit", amount:100000, category:"Groceries", date:new Date()}
+        await expect(user.transaction(transaction)).rejects.toThrow("Insufficient balance");
     });
 
     test("should throw an error when transaction details invalid", async () => {
 
-        const txn1:ITransaction = {id:user.transactions.length+1, type: "debit", amount:-100, category:"Groceries", date:new Date()}
-        await expect(user.transaction( txn1)).rejects.toThrow("Transaction amount should greater than zero");
+        const transaction1:ITransaction = {id:user.transactions.length+1, type: "debit", amount:-100, category:"Groceries", date:new Date()}
+        await expect(user.transaction(transaction1)).rejects.toThrow("Transaction amount should greater than zero");
 
-        const txn2:ITransaction = {id:user.transactions.length+1, type: "debit", amount:100, category:"", date:new Date()}
-        await expect(user.transaction( txn2)).rejects.toThrow("Transaction category should be non-empty");
+        const transaction2:ITransaction = {id:user.transactions.length+1, type: "debit", amount:100, category:"", date:new Date()}
+        await expect(user.transaction( transaction2)).rejects.toThrow("Transaction category should be non-empty");
     });
 
-    test("should throw an error when budget is insufficient for an existing category", async () => {
+    test("should return alert message when budget is insufficient for an existing category", async () => {
 
         await user.setBudget("Rent", 1000);
-        const txn: ITransaction = { id: user.transactions.length + 1, type: "debit", amount: 2000, category: "Rent", date: new Date() };
-        await expect(user.transaction(txn)).rejects.toThrow("Insufficient budget for given category");
+        const transaction: ITransaction = { id: user.transactions.length + 1, type: "debit", amount: 2000, category: "Rent", date: new Date() };
+         expect(await user.transaction(transaction)).toEqual("Insufficient budget for given category");
     });
 
     test("should allow a debit transaction when the budget category does not exist", async () => {
-        const txn: ITransaction = { id: user.transactions.length + 1, type: "debit", amount: 500, category: "Travel", date: new Date() };
-        await user.transaction(txn);
+        const transaction: ITransaction = { id: user.transactions.length + 1, type: "debit", amount: 500, category: "Travel", date: new Date() };
+        await user.transaction(transaction);
         expect(user.availableBalance).toBe(18500); 
+    });
+
+    test("Should add credit amount to savings goal if such category exists",async ()=>{
+
+        const savingsGoal = { title: "Travel", targetAmount: 2000, currentAmountSaved: 0 }
+        await user.addSavingsGoal(savingsGoal);
+        
+        const transaction:ITransaction = {id:user.transactions.length+1, type: "credit", amount:500, category:"Travel", date:new Date()};
+        await user.transaction(transaction);
+
+        const goal = user.savingsGoals.find((goal)=> goal.title===transaction.category);
+        expect(user.savingsGoals).toContainEqual(goal);  
+    });
+
+    test("Should return alert message when user reaches close to savings goal",async ()=>{
+
+        const savingsGoal = { title: "Home", targetAmount: 2000, currentAmountSaved: 0 }
+        await user.addSavingsGoal(savingsGoal);
+        
+        const transaction:ITransaction = {id:user.transactions.length+1, type: "credit", amount:1950, category:"Home", date:new Date()};
+        const progressmessage = await user.transaction(transaction);
+        expect(progressmessage).toEqual(`You have reached 98% of the target amount`)
+ 
     });
     
 })

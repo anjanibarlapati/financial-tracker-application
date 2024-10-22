@@ -378,7 +378,7 @@ describe('User Controller', () => {
 
             expect(User.findOneAndUpdate).toHaveBeenCalledWith(
                 { username: req.params.username, "savingsGoals.title": req.body.title },
-                { $inc: { "savingsGoals.$.currentAmountSaved": req.body.amount } },
+                { $inc: { "savingsGoals.$.currentAmountSaved": req.body.amount, availableBalance: req.body.amount } },
                 { new: true }
             );
             expect(res.json).toHaveBeenCalledWith(mockResult);
@@ -478,7 +478,7 @@ describe('User Controller', () => {
         it("Should add a new transaction and return user", async () => {
             req.body = mockTransaction;
 
-            const mockedAddTransaction = jest.spyOn(UserClass.prototype, 'transaction').mockImplementation(async () => {});
+            const mockedAddTransaction = jest.spyOn(UserClass.prototype, 'transaction').mockImplementation(async () => { return ''});
 
             await addTransactionHandler(req as Request, res as Response);
 

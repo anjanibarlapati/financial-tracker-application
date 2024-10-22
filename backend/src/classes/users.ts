@@ -32,65 +32,86 @@ export class User implements IUser {
         this.savingsGoals = [];
     }
 
-    isValidTransaction(txn: ITransaction) {
+    isValidTransaction(transaction: ITransaction) {
 
-        if (txn.amount <= 0)
+        if (transaction.amount <= 0)
             throw new Error("Transaction amount should greater than zero");
-        if (!txn.category || txn.category.trim() === '')
+        if (!transaction.category || transaction.category.trim() === '')
             throw new Error("Transaction category should be non-empty");
 
-        if (txn.type === "debit" && txn.amount > this.availableBalance)
+        if (transaction.type === "debit" && transaction.amount > this.availableBalance)
             throw new Error("Insufficient balance");
 
     }
 
-    async updateBudgetAmountSpent(txn: ITransaction) {
+    async updateBudgetAmountSpent(transaction: ITransaction) {
 
-        const budget = this.budgets.find((b) => b.category === txn.category);
+        const budget = this.budgets.find((budget) => budget.category === transaction.category);
 
         if (!budget) {
             return;
         }
-        if (budget.amount - (budget.amountSpent + txn.amount) < 0) {
+        if (budget.amount - (budget.amountSpent + transaction.amount) < 0) {
             throw new Error("Insufficient budget for given category");
         }
-        this.budgets.forEach(async (b) => {
-            if (b.category === txn.category) {
-                await updateBudgetAmountSpent(this.username, txn.category, txn.amount);
-                return b.amountSpent += txn.amount;
+        this.budgets.forEach(async (budget) => {
+            if (budget.category === transaction.category) {
+                await updateBudgetAmountSpent(this.username, transaction.category, transaction.amount);
+                return budget.amountSpent += transaction.amount;
             }
         })
     }
 
-    async transaction(txn: ITransaction) {
+    async transaction(transaction: ITransaction) {
+        let progress: number = 0;
+        this.isValidTransaction(transaction);
 
-        this.isValidTransaction(txn);
+        if (transaction.type === 'credit') {
+            this.availableBalance += transaction.amount;
 
-        if (txn.type === 'credit') {
-            this.availableBalance += txn.amount;
-            this.totalIncome += txn.amount;
-            const index = this.income.findIndex(i => i.source === txn.category);
-            if (index === -1) {
-                this.income.push({ source: txn.category, amount: txn.amount });
-                await addIncome(this.username, txn.category, txn.amount);
+            const savingsGoalIndex = this.savingsGoals.findIndex(goal => goal.title === transaction.category);
+
+            if (savingsGoalIndex !== -1) {
+                await this.addAmountToASavingsGoal(transaction.category, transaction.amount);
+                await addAmountToASavingsGoal(this.username, transaction.category, transaction.amount);
+                progress = this.checkSavingsGoalProgress(transaction.category);
             }
             else {
-                this.income[index].amount += txn.amount;
-                await updateIncomeAmount(this.username, txn.category, txn.amount);
+                this.totalIncome += transaction.amount;
+                const index = this.income.findIndex(income => income.source === transaction.category);
+                if (index === -1) {
+                    this.income.push({ source: transaction.category, amount: transaction.amount });
+                    await addIncome(this.username, transaction.category, transaction.amount);
+                }
+
+                else {
+                    this.income[index].amount += transaction.amount;
+                    await updateIncomeAmount(this.username, transaction.category, transaction.amount);
+                }
             }
         }
         else {
-            await this.updateBudgetAmountSpent(txn);
-            this.availableBalance -= txn.amount;
-            await debitAmount(this.username, txn.amount);
+            try{
+                await this.updateBudgetAmountSpent(transaction);
+            } catch(error){
+                return "Insufficient budget for given category";
+            }
+            this.availableBalance -= transaction.amount;
+            await debitAmount(this.username, transaction.amount);
         }
-        this.transactions.push(txn);
-        await addTransaction(this.username, txn);
+
+        this.transactions.push(transaction);
+
+        await addTransaction(this.username, transaction);
+
+        if (progress >= 90) {
+            return (`You have reached ${progress}% of the target amount`);
+        }
     }
 
     async setBudget(category: string, amount: number) {
 
-        const isBudgetExist = this.budgets.some(b => b.category === category);
+        const isBudgetExist = this.budgets.some(budget=> budget.category === category);
 
         if (isBudgetExist) {
             throw new Error("Budget for this category already exists");
@@ -110,7 +131,7 @@ export class User implements IUser {
 
     async updateBudgetAmount(category: string, amount: number) {
 
-        const budgetIndex = this.budgets.findIndex(b => b.category === category);
+        const budgetIndex = this.budgets.findIndex(budget => budget.category === category);
 
         if (budgetIndex === -1) {
             throw new Error("Budget for this category do not exist");
@@ -132,7 +153,7 @@ export class User implements IUser {
 
     checkBudgetSpent(category: string) {
 
-        const budgetIndex = this.budgets.findIndex(b => b.category === category);
+        const budgetIndex = this.budgets.findIndex(budget => budget.category === category);
         if (budgetIndex === -1) {
             throw new Error("Budget for this category do not exist");
         }
@@ -149,7 +170,7 @@ export class User implements IUser {
 
         }
 
-        const goal: boolean = this.savingsGoals.some(s => s.title === savingsGoal.title);
+        const goal: boolean = this.savingsGoals.some(goal => goal.title === savingsGoal.title);
         if (goal) {
             throw new Error("Savings goal with this title already exists");
         }
@@ -161,30 +182,18 @@ export class User implements IUser {
 
     async addAmountToASavingsGoal(title: string, amount: number) {
 
-        if (amount <= 0) {
-            throw new Error("Updated current saved amount should be greater than zero")
-        }
-        const index: number = this.savingsGoals.findIndex(s => s.title === title);
-        if (index === -1) {
-            throw new Error("Savings goal with this title do not exist");
-        }
+        const index: number = this.savingsGoals.findIndex(goal => goal.title === title);
+
         if (this.savingsGoals[index].currentAmountSaved + amount > this.savingsGoals[index].targetAmount) {
             throw new Error("Saving amount exceeding target amount");
         }
         this.savingsGoals[index].currentAmountSaved += amount;
         await addAmountToASavingsGoal(this.username, title, amount);
-        
-        const progress = this.checkSavingsGoalProgress(title);
-        
-        if (progress >= 90) {
-            console.log(`You have reached ${progress}% of the target amount`);
-        }
-
     }
 
     checkSavingsGoalProgress(title: string) {
 
-        const index: number = this.savingsGoals.findIndex(s => s.title === title);
+        const index: number = this.savingsGoals.findIndex(goal => goal.title === title);
         if (index === -1) {
             throw new Error("Savings goal with this title do not exist");
         }
@@ -220,64 +229,72 @@ export class User implements IUser {
 
     }
 
-    financialReportBudget(txn: ITransaction, budgets: IFinancialReportBudget[]) {
+    financialReportBudget(transaction: ITransaction, budgets: IFinancialReportBudget[]) {
 
-        const index = budgets.findIndex(b => b.category === txn.category)
-        const budget = this.budgets.find(budget=>budget.category === txn.category);
-        if (index === -1 && budget) {
-            budgets.push({ category: txn.category,amount:budget.amount, amountSpent: txn.amount });
-        }
-        else {
-            budgets[index].amountSpent += txn.amount;
+        const index = budgets.findIndex(budget => budget.category === transaction.category);
+        if (index !== -1) {
+            budgets[index].amountSpent += transaction.amount;
         }
     }
 
-    budgetSummary() {
-        let budgetSummary: IFinancialReportBudget[] = [];
-        for (let i = 0; i < this.transactions.length; i++) {
+    budgetSummary(fromDate: Date, toDate: Date) {
 
-            if (this.transactions[i].type === 'debit') {
-                if (this.transactions[i].category !== "Other") {
-                    this.financialReportBudget(this.transactions[i], budgetSummary);
-                }
+        let budgetSummary: IFinancialReportBudget[] = this.budgets.map((budget) => { return { ...budget, amountSpent: 0 } });
+        for (let i = 0; i < this.transactions.length; i++) {
+            if (this.transactions[i].type === 'debit' && new Date(this.transactions[i].date) >= fromDate && new Date(this.transactions[i].date) <= toDate && this.transactions[i].category !== "Other") {
+                this.financialReportBudget(this.transactions[i], budgetSummary);
             }
         }
         return budgetSummary;
     }
 
-    savingsGoalsProgress() {
-        let savingsGoalsReport: IFinancialReportSavingsGoal[] = [];
-        savingsGoalsReport = this.savingsGoals.map(goal => {
-            return { title: goal.title, progress: ((goal.currentAmountSaved / goal.targetAmount) * 100).toFixed(0) + "%" }
+    financialReportSavingsGoals(transaction: ITransaction, savingsGoals: IFinancialReportSavingsGoal[]) {
+        const index = savingsGoals.findIndex(goal => goal.title === transaction.category);
+        if (index !== -1) {
+            savingsGoals[index].currentAmountSaved += transaction.amount;
+        }
+    }
+
+    savingsGoalsProgress(fromDate: Date, toDate: Date) {
+        let savingsGoalsReport: IFinancialReportSavingsGoal[] = this.savingsGoals.map((goal: ISavingsGoal) => { return { title: goal.title, targetAmount: goal.targetAmount, currentAmountSaved: 0, progress: "0%" } });
+
+        for (let i = 0; i < this.transactions.length; i++) {
+            if (this.transactions[i].type === 'credit' && new Date(this.transactions[i].date) >= fromDate && new Date(this.transactions[i].date) <= toDate && this.transactions[i].category !== "Other") {
+                this.financialReportSavingsGoals(this.transactions[i], savingsGoalsReport);
+            }
+        }
+
+        savingsGoalsReport = savingsGoalsReport.map((goal) => {
+            return { ...goal, progress: ((goal.currentAmountSaved / goal.targetAmount) * 100).toFixed(1) + "%" }
         });
         return savingsGoalsReport;
     }
 
-    async addTransactionsfromCSVFile(transactionsPath:string){
+    async addTransactionsfromCSVFile(transactionsPath: string) {
 
-            if(!transactionsPath || transactionsPath.trim()==="") {
-               throw new Error("Transactions data path is not defined")
-            }
+        if (!transactionsPath || transactionsPath.trim() === "") {
+            throw new Error("Transactions data path is not defined")
+        }
 
-            const fileStream = fs.createReadStream(transactionsPath);
-            const csvPipe = fileStream.pipe(csvParser());
-             let count =0;
+        const fileStream = fs.createReadStream(transactionsPath);
+        const csvPipe = fileStream.pipe(csvParser());
+        let count = 0;
 
-             for await (const data of csvPipe) {
-                console.log("Processing Record " + (++count) + ": " + data);
-                const transaction = {
-                    id: this.transactions.length + 1,
-                    type: data.type as "debit" | "credit",
-                    amount: Number(data.amount),
-                    category: data.category,
-                    date: new Date(data.date),
-                };
-        
-                await this.transaction(transaction);
-                console.log("Transaction inserted");
-            }
+        for await (const data of csvPipe) {
+            console.log("Processing Record " + (++count) + ": " + data);
+            const transaction = {
+                id: this.transactions.length + 1,
+                type: data.type as "debit" | "credit",
+                amount: Number(data.amount),
+                category: data.category,
+                date: new Date(data.date),
+            };
 
-            console.log("Inserted transactions");
+            await this.transaction(transaction);
+            console.log("Transaction inserted");
+        }
+
+        console.log("Inserted transactions");
     }
 
 }
