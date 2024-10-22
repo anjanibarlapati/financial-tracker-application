@@ -1,7 +1,11 @@
 .record-expenses-container{
     display: flex;
     flex-direction: column;
-    gap:30px
+    gap:30px;
+    background-color: rgba(154, 223, 242, 0.2);
+    border: 2px solid none;
+    border-radius: 10px;
+    padding: 30px;
 }
 
 .record-expenses-title{
@@ -36,7 +40,8 @@
 
 .icon-body:hover{
    transition: color 0.3s ease;
-   background-color: rgba(154, 223, 242, 0.2);
+   /* background-color: rgba(154, 223, 242, 0.2); */
+   background-color: rgba(243, 46, 138, 0.2);
 }
 
 .record-expenses-icon{

@@ -1,8 +1,19 @@
+.reports-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap:30px;
+    background-color: rgba(154, 223, 242, 0.2);
+    border: 2px solid none;
+    border-radius: 10px;
+    padding: 50px;
+}
 .reports-header-container{
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap:30px
+    gap:30px;
+    width: 100%;
 }
 
 .reports-header{
@@ -30,6 +41,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 100%;
 }
 
 .report-dropdown-body{
@@ -69,6 +81,18 @@
     font-size: 15px;
     background-color: #216D9F;
     color: white;
+
+}
+
+.generate:hover{
+    border: 1px solid white;
+    border-radius: 3px;
+    padding: 8px;
+    width:100px;
+    font-size: 15px;
+    background-color: #c4004b;
+    color: white;
+    transform: scale(1.1);
 }
 
 .report-body{

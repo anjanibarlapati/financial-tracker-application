@@ -53,7 +53,7 @@ export function Reports(): JSX.Element {
     }
 
     return (
-        <>
+        <div className='reports-container'>
             <div className="reports-header-container">
                 <div className="reports-header">
                     <img src={'/assets/report.png'} alt="report" className="reports-icon"></img>
@@ -151,6 +151,6 @@ export function Reports(): JSX.Element {
                         )}
                 </div>
             }
-        </>
+        </div>
     )
 }

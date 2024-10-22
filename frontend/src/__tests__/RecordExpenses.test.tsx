@@ -34,7 +34,7 @@ describe("Record Expenses Component", ()=>{
     test("Should render transaction form on clicking add transaction", ()=>{
         const transactionText= screen.getByText(/add transaction/i);
         fireEvent.click(transactionText);
-        const transactionForm = screen.getByPlaceholderText(/transaction type/i);
+        const transactionForm = screen.getByTestId('transaction-form');
         expect(transactionForm).toBeInTheDocument();
 
         expect(screen.queryByTestId('budget-form')).not.toBeInTheDocument();

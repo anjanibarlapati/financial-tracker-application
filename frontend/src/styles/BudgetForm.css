@@ -19,7 +19,6 @@
     font-size: 15px;
     color: black;
 }
-
 .budget-button {
     border: 1px solid #216D9F;
     border-radius: 3px;
@@ -28,4 +27,16 @@
     font-size: 15px;
     background-color: #216D9F;
     color: white;
+
+}
+
+.budget-button:hover {
+    border: 1px solid white;
+    border-radius: 3px;
+    padding: 8px;
+    width: 40%;
+    font-size: 15px;
+    background-color: #c4004b;
+    color: white;
+    transform: scale(1.1);
 }

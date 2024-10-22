@@ -12,6 +12,14 @@
     width:300px;
 }
 
+.transaction-types{
+    width: 90%;
+    border: 1.5px solid #216D9F;
+    border-radius: 5px;
+    background-color: white;
+    padding: 10px;
+} 
+
 .transaction-input{
     border: 1.5px solid #216D9F;
     border-radius: 3px;
@@ -29,4 +37,15 @@
     font-size: 15px;
     background-color: #216D9F;
     color: white;
+}
+
+.transaction-button:hover{
+    border: 1px solid white;
+    border-radius: 3px;
+    padding: 8px;
+    width:40%;
+    font-size: 15px;
+    background-color: #c4004b;
+    color: white;
+    transform: scale(1.1);
 }
