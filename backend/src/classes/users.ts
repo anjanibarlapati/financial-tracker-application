@@ -205,10 +205,10 @@ export class User implements IUser {
         }
         for (let i = 0; i < this.transactions.length; i++) {
 
-            if (this.transactions[i].type === 'debit' && this.transactions[i].date >= fromDate && this.transactions[i].date <= toDate) {
+            if (this.transactions[i].type === 'debit' && new Date(this.transactions[i].date) >= fromDate && new Date(this.transactions[i].date) <= toDate) {
                 totalExpenses += this.transactions[i].amount;
             }
-            if (this.transactions[i].type === 'credit' && this.transactions[i].date >= fromDate && this.transactions[i].date <= toDate) {
+            if (this.transactions[i].type === 'credit' && new Date(this.transactions[i].date) >= fromDate && new Date(this.transactions[i].date) <= toDate) {
                 totalIncome += this.transactions[i].amount;
             }
         }

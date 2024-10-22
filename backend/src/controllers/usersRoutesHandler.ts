@@ -231,3 +231,16 @@ export const addSavingsGoalHandler = async(req:Request, res:Response)=>{
         res.status(500).json({ message: 'Error while adding savings goal' });
     }
 }
+
+export const generateTotalIncomeAndExpenses = async(req:Request, res:Response)=>{
+
+    const fromDate = new Date(String(req.query.fromDate));
+    const toDate = new Date(String(req.query.toDate));
+
+    try{
+       const report= user.totalIncomeAndExpenses(fromDate, toDate);
+       res.json(report);
+    } catch(error){
+        res.status(500).json({ message: 'Error while generating total income and expenses report of the user' });
+    }
+}
