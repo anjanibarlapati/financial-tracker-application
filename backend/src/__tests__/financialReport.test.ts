@@ -103,9 +103,9 @@ describe("Financial Report Functionality",()=>{
     test("Should return summary of budget usage across different categories", ()=>{
 
         const report:IFinancialReportBudget[] = [
-                { category: 'Travel', amountSpent: 800 },
-                { category: 'Groceries', amountSpent: 5000 },
-                { category: 'Entertainment', amountSpent: 1000 }
+                { category: 'Travel', amount:1000, amountSpent: 800 },
+                { category: 'Groceries',  amount:10000, amountSpent: 5000 },
+                { category: 'Entertainment', amount:5000,  amountSpent: 1000 }
         ]
         expect(user.budgetSummary()).toEqual(report);
 

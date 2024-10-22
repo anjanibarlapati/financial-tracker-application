@@ -222,9 +222,10 @@ export class User implements IUser {
 
     financialReportBudget(txn: ITransaction, budgets: IFinancialReportBudget[]) {
 
-        const index = budgets.findIndex(b => b.category === txn.category);
-        if (index === -1) {
-            budgets.push({ category: txn.category, amountSpent: txn.amount });
+        const index = budgets.findIndex(b => b.category === txn.category)
+        const budget = this.budgets.find(budget=>budget.category === txn.category);
+        if (index === -1 && budget) {
+            budgets.push({ category: txn.category,amount:budget.amount, amountSpent: txn.amount });
         }
         else {
             budgets[index].amountSpent += txn.amount;
