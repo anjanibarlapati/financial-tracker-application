@@ -73,7 +73,6 @@ export class User implements IUser {
 
             if (savingsGoalIndex !== -1) {
                 await this.addAmountToASavingsGoal(transaction.category, transaction.amount);
-                await addAmountToASavingsGoal(this.username, transaction.category, transaction.amount);
                 progress = this.checkSavingsGoalProgress(transaction.category);
             }
             else {
