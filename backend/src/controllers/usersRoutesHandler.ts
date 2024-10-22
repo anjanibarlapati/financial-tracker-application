@@ -165,7 +165,7 @@ export const updateSavingsGoalAmount = async (req: Request, res: Response) => {
     try {
         const result = await User.findOneAndUpdate(
             { username: req.params.username, "savingsGoals.title": req.body.title },
-            { $inc: { "savingsGoals.$.currentAmountSaved": req.body.amount } },
+            { $inc: { "savingsGoals.$.currentAmountSaved": req.body.amount, availableBalance: req.body.amount } },
             {new:true}
         );
         res.json(result);
@@ -242,5 +242,28 @@ export const generateTotalIncomeAndExpenses = async(req:Request, res:Response)=>
        res.json(report);
     } catch(error){
         res.status(500).json({ message: 'Error while generating total income and expenses report of the user' });
+    }
+}
+
+export const generateBudgetSummary = async(req:Request, res:Response)=>{
+    const fromDate = new Date(String(req.query.fromDate));
+    const toDate = new Date(String(req.query.toDate));
+
+    try{
+       const report= user.budgetSummary(fromDate, toDate);
+       res.json(report);
+    } catch(error){
+        res.status(500).json({ message: 'Error while generating budget summary report of the user' });
+    }
+}
+
+export const generateSavingsGoalsProgressReport = async(req:Request, res:Response)=>{
+    const fromDate = new Date(String(req.query.fromDate));
+    const toDate = new Date(String(req.query.toDate));
+    try{
+       const report= user.savingsGoalsProgress(fromDate, toDate);
+       res.json(report);
+    } catch(error){
+        res.status(500).json({ message: 'Error while generating savings goals progress report of the user' });
     }
 }

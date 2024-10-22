@@ -8,7 +8,9 @@ import {
     addTransactionHandler,
     addBudgetHandler,
     addSavingsGoalHandler,
-    generateTotalIncomeAndExpenses
+    generateTotalIncomeAndExpenses,
+    generateBudgetSummary,
+    generateSavingsGoalsProgressReport
 } from '../controllers/usersRoutesHandler';
 
 export const userRouter = express.Router();
@@ -50,4 +52,8 @@ userRouter.put('/addBudget/', addBudgetHandler);
 userRouter.put('/addSavingsGoal/', addSavingsGoalHandler);
 
 userRouter.get('/generate/total-income-expenses/', generateTotalIncomeAndExpenses);
+
+userRouter.get('/generate/budget-summary/', generateBudgetSummary);
+
+userRouter.get('/generate/savings-goals-progress/',generateSavingsGoalsProgressReport)
 
