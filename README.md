@@ -78,15 +78,17 @@
       
  ## Usage
 To run the backend test files, use below commands
-    ```bash
-      cd backend
+
+   ```bash
+   cd backend
    ```
    ```bash
    npm run test
    ```
 To run the frontend test files, use below commands
-    ```bash
-      cd frontend
+
+   ```bash
+   cd frontend
    ```
    ```bash
    npm run test
