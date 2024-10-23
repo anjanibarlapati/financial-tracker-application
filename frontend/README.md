@@ -1,46 +1,110 @@
-# Getting Started with Create React App
+# FinGrow
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+- This application help users to manage their income, expenses, and savings goals, providing insights into their financial habits and encouraging better financial decision-making.
 
-## Available Scripts
+## Description
 
-In the project directory, you can run:
+1. It has a registration and login page.
+2. User can manages all his/her transactions by storeing all transactions.
+3. User can set budgets, update budgets and  check how much of the budget has been spent for different categories.
+4. User can to set savings goals, add amount to savings goals and check progress towards them.
+5. It generates finanical report of a user which has total income and expenses, summary of budget usage across different categories and progress towards savings goals over a specified period.
+6. It alerts the user when he/she exceed the budget in any category or when he/she is close to reaching a savings goal.
+7. It stores user data, transactions, budgets, and savings goals in the database.
 
-### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Table of Contents
+- [Technologies Used](#technologies-used)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Usage](#usage)
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Technologies Used
 
-### `npm test`
+- Typescript
+- Jest
+- MongoDB
+- Mongoose
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Requirements
 
-### `npm run build`
+1. Install Node.js on macOS. [NodeJS](https://nodejs.org/en/download/package-manager)
+   ```bash
+   brew install node
+   ```
+2. Install watchman on macOS using brew. [Watchman](https://formulae.brew.sh/formula/watchman)
+   ```bash
+   brew install watchman
+   ```
+3. To install MongoDB in MacOS, run following commands. [MongoDB](https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-os-x/)
+   -  To tap MongoDB Homebrew,  .
+      ```bash
+      brew tap mongodb/brew
+      ```
+   -  To install MongoDB, run the following command
+      ```
+      brew install mongodb-community@7.0
+      ```
+   -  To run MongoDB as a macOS service
+      ```
+      brew services start mongodb-community@7.0
+      ```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Installation
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+1. To clone the repository:
+   ```bash
+   git clone -b fingrow-part-3 https://github.com/anjanibarlapati/financial-tracker-application
+   ```
 
-### `npm run eject`
+2. To install dependencies:
+   - Go to the frontend directory
+      ```bash
+      cd frontend
+      ```
+   - Run following command.
+      ```bash
+      npm install
+      ```
+   - Go to the backend directory
+      ```bash
+      cd backend
+      ```
+   - Run following command.
+      ```bash
+      npm install
+      ```
+      
+ ## Usage
+To run the backend test files, use below commands
+    ```bash
+      cd backend
+   ```
+   ```bash
+   npm run test
+   ```
+To run the frontend test files, use below commands
+    ```bash
+      cd frontend
+   ```
+   ```bash
+   npm run test
+   ```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+To run the project, use the following commands:
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+1. To run the backend execute the following commands
+      ```bash
+      cd backend
+      ```
+   ```bash
+   npm run dev
+   ```
+2. To run the application run below commands in different terminal window.
+      ```bash
+      cd frontend
+      ```
+   ```bash
+   npm run start
+   ```
