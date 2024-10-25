@@ -1,5 +1,4 @@
 import { Register } from './components/Register';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import './styles/App.css';
 
 function App(): JSX.Element{
