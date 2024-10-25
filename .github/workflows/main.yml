@@ -3,7 +3,7 @@ name: Test and Build
 on:
   push:
     branches:
-      - fingrow-ci-cd
+      - fingrow-ci-cd-part-2
   pull_request:
     branches:
       - master
