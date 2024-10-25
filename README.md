@@ -55,7 +55,7 @@
 
 1. To clone the repository:
    ```bash
-   git clone -b fingrow-ci-cd git@github.com:anjanibarlapati/financial-tracker-application.git
+   git clone -b fingrow-ci-cd-part-2 git@github.com:anjanibarlapati/financial-tracker-application.git
    ```
 
 2. To install dependencies:
