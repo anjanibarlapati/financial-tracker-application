@@ -5,26 +5,25 @@ on:
     branches:
       - fingrow-ci-cd
 
-job:
-   test-and-build:
-      runs-on: macos-latest
-      name: Test and Build
-      steps:
-         - name: Checkout
-           uses: 'actions/checkout@v2
+jobs:
+  test-and-build:
+    runs-on: macos-latest
+    name: Test and Build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
 
-         - name: Install Dependencies
-           run:  | 
-             cd frontend
-             npm install
+      - name: Install Dependencies
+        run: |
+          cd frontend
+          npm install
 
-         - name: Run Tests
-           run: |
-             cd frontend
-             npm test
+      - name: Run Tests
+        run: |
+          cd frontend
+          npm test
 
-         - name: Build 
-           run: |
-             cd frontend
-             npm run build
-  
+      - name: Build 
+        run: |
+          cd frontend
+          npm run build
