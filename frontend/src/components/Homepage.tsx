@@ -9,7 +9,7 @@ export function Homepage(): JSX.Element {
     const { currentUser } = useContext(UserContext);
 
     return (
-        <div className="homepage-container">
+        <div className="homepage-container" data-testid="homepage">
             <div className="titles-image">
                 <div className="titles-body">
                     <h1 className="welcome-message">Welcome <span className="username">{currentUser.username.toUpperCase()}</span></h1>

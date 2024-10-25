@@ -22,7 +22,7 @@ export function Login(): JSX.Element {
     }
 
     return (
-        <div className="container">
+        <div className="container" data-testid = "login">
             <div className='title-logo'>
                 <p className='app-title'>FinGrow</p>
                 <img src="/assets/app-logo.png" className='app-logo' alt='Logo'></img>
