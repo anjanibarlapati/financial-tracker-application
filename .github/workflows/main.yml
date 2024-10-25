@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - fingrow-ci-cd
+  pull_request:
+    branches:
+      - master
 
 jobs:
   test-and-build:
