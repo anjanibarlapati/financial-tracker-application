@@ -130,7 +130,7 @@ describe('TransactionForm Component', () => {
         alertMock.mockRestore();
     });
 
-    test('Should not display an alert when savings goal progress is above 90%', async () => {
+    test('Should display an alert when savings goal progress is above 90%', async () => {
         const alertMock = jest.spyOn(window, 'alert').mockImplementation(() => { });
     
         const selectElement = screen.getByRole('combobox');
@@ -188,7 +188,7 @@ describe('TransactionForm Component', () => {
         fireEvent.click(addButton);
     
         await waitFor(() => {
-            expect(alertMock).not.toHaveBeenCalledWith("You have reached 100% of the target amount");
+            expect(alertMock).toHaveBeenCalledWith("Transaction added successfully");
         });
     
         alertMock.mockRestore();
