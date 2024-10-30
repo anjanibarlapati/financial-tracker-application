@@ -1,0 +1,49 @@
+.homepage-container {
+    display: flex;
+    flex:1;
+    flex-direction: column;
+    height: 100%;
+    background-color: rgba(194, 228, 248, 0.2);
+    padding: 55px 55px 55px 55px;
+    gap:50px;
+}
+
+.titles-image {
+    display: flex;
+    flex-direction: row; 
+    align-items: center; 
+    justify-content: space-evenly;
+}
+
+.titles-body{
+    flex: 1;
+}
+
+.image-body{
+    flex: 1;
+    display: flex; 
+    justify-content: center;
+} 
+
+.image {
+    height:60%; 
+    width: 90%;
+    object-fit: fill;
+    border: 1px solid #216D9F;
+    border-radius: 40px;
+}
+
+.welcome-message {
+    color: #216D9F;
+}
+
+.username {
+    font-weight: bold;
+    color: #c4004b;
+}
+
+.title-subtitle {
+    color: #216D9F;
+    font-weight: bold;
+    font-style: italic;
+}
