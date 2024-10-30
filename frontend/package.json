@@ -22,7 +22,18 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --coverage --transformIgnorePatterns \"node_modules/(?!@toolz/allow-react)/\" --env=jsdom",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "coverage": "npm test -- --coverage"
+  },
+  "jest": {
+    "coverageThreshold": {
+      "global": {
+        "statements": 100,
+        "branches": 100,
+        "functions": 100,
+        "lines": 100
+      }
+    }
   },
   "eslintConfig": {
     "extends": [
