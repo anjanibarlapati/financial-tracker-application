@@ -25,6 +25,7 @@ pipeline {
                 script {
                     dir('./frontend') {
                         sh 'npm test'
+                        sh 'npm run coverage'
                     }
                 }
             }
