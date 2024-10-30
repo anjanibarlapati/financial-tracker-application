@@ -41,11 +41,11 @@ pipeline {
     }
 
     post {
-        success {
-            echo 'Tests and  Build completed successful.'
+        sucess {
+            mail bcc: '', body: "'Project: ${env.JOB_NAME} <br/> Build Number: ${env.BUILD_NUMBER} <br/> url: ${env.BUILD_URL}'", cc: '', from: '', replyTo: '', subject: "'${currentBuild.result}'", to: 'barlapatianjani@gmail.com'
         }
         failure {
-            echo 'Tests or Build failed.'
+            mail bcc: '', body: "'Project: ${env.JOB_NAME} <br/> Build Number: ${env.BUILD_NUMBER} <br/> url: ${env.BUILD_URL}'", cc: '', from: '', replyTo: '', subject: "'${currentBuild.result}'", to: 'barlapatianjani@gmail.com'
         }
     }
 }
