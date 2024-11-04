@@ -58,7 +58,7 @@
       ```bash
       npm install
       ```
-   - Go to the backend directory
+   - Go to the backend directory:
       ```bash
       cd backend
       ```
