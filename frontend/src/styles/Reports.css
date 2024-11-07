@@ -1,0 +1,143 @@
+.reports-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap:30px;
+    background-color: rgba(154, 223, 242, 0.2);
+    border: 2px solid none;
+    border-radius: 10px;
+    padding: 50px;
+}
+.reports-header-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap:30px;
+    width: 100%;
+}
+
+.reports-header{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 2px 2px 5px grey;
+    background-color: rgba(255,255,255,0.6);
+    width: 50%;
+ }
+
+.reports-icon{
+    height: 50px;
+    opacity: 2;
+}
+
+.reports-title{
+    color: #216D9F;
+}
+
+.report-dropdown{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.report-dropdown-body{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap:30px;
+    background-color: white;
+    padding: 20px;
+    box-shadow: 2px 2px 5px grey;
+    border: 1px solid none;
+    border-radius: 5px;
+    width:30%;
+}
+
+.reports-options{
+    width: 70%;
+    border: 2px solid #216D9F;
+    border-radius: 5px;
+    background-color: white;
+    padding: 10px;
+} 
+
+.reports-input{
+    width: 67%;
+    border: 2px solid #216D9F;
+    border-radius: 5px;
+    background-color: white;
+    padding: 10px;
+}  
+
+.generate{
+    border: 1px solid #216D9F;
+    border-radius: 3px;
+    padding: 8px;
+    width:100px;
+    font-size: 15px;
+    background-color: #216D9F;
+    color: white;
+
+}
+
+.generate:hover{
+    border: 1px solid white;
+    border-radius: 3px;
+    padding: 8px;
+    width:100px;
+    font-size: 15px;
+    background-color: #c4004b;
+    color: white;
+    transform: scale(1.1);
+}
+
+.report-body{
+    display: flex;
+    flex-direction: column;
+    gap:10px;
+    background-color: white;
+
+    box-shadow: 2px 2px 5px grey;
+    border: 1px solid none;
+    border-radius: 5px;
+    width:40%;
+    padding: 20px;
+}
+
+.report-title{
+    color: #216D9F;
+    text-align: center;
+}
+
+.empty-report{
+    color: black;
+    text-align: center;
+    font-size: 18px;
+    font-style: italic;
+}
+
+.report-element-body{
+    display: flex;
+    flex: 1;
+    justify-content: space-evenly;
+    gap:30px;
+}
+
+.report-element-title{
+    color:#c4004b;
+
+}
+
+.report-element{
+    color:black;
+}
+
+.report-element-amount{
+    color: green;
+}
+
+

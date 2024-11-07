@@ -1,0 +1,42 @@
+.savings-goal-form-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap:20px;
+    background-color: white;
+    padding: 20px;
+    box-shadow: 2px 2px 5px grey;
+    border: 1px solid none;
+    border-radius: 5px;
+    width:300px;
+}
+
+.savings-goal-input{
+    border: 1.5px solid #216D9F;
+    border-radius: 3px;
+    padding: 8px;
+    width: 250px;
+    font-size: 15px;
+    color:black;
+}
+
+.savings-goal-button{
+    border: 1px solid #216D9F;
+    border-radius: 3px;
+    padding: 8px;
+    width:40%;
+    font-size: 15px;
+    background-color: #216D9F;
+    color: white;
+}
+
+.savings-goal-button:hover{
+    border: 1px solid white;
+    border-radius: 3px;
+    padding: 8px;
+    width:40%;
+    font-size: 15px;
+    background-color: #c4004b;
+    color: white;
+    transform: scale(1.1);
+}
