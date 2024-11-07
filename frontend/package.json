@@ -1,7 +1,7 @@
 {
   "name": "frontend",
   "version": "0.1.0",
-  "homepage": "https://anjanibarlapati.github.io/financial-tracker-application",
+  "homepage": "https://anjanibarlapati.github.io/financial-tracker-application/",
 
   "private": true,
   "dependencies": {
