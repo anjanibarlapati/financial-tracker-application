@@ -1,0 +1,269 @@
+import { Request, Response } from 'express';
+import { User } from '../models/users';
+import { register } from '../functions/registration';
+import {User as UserClass} from '../classes/users';
+import { login } from '../functions/login';
+import { ITransaction } from '../interfaces/transactions';
+
+let user:UserClass; 
+
+export const createUser = async (req: Request, res: Response) => {
+    try {
+        const user = await User.create(req.body);
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({ message: 'Error while inserting user' });
+    }
+};
+
+export const getAllUsers = async (req: Request, res: Response) => {
+    try {
+        const users = await User.find();
+        res.json(users);
+    } catch (error) {
+        res.status(500).json({ message: 'Error while fetching all users' });
+    }
+};
+
+export const getUser = async (req: Request, res: Response) => {
+    try {
+        const user = await User.findOne({ username: req.query.username, password: req.query.password });
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({ message: 'Error while getting user' });
+    }
+};
+
+export const isExistingUser = async (req: Request, res: Response) => {
+    try {
+        const user = await User.findOne({ username: req.params.username});
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({ message: 'Error while getting user' });
+    }
+};
+
+export const updateBudgetAmountSpent = async (req: Request, res: Response) => {
+    try {
+        const user = await User.findOneAndUpdate(
+            { username: req.params.username, "budgets.category": req.body.category },
+            { $inc: { "budgets.$.amountSpent": req.body.amount }},
+            {new:true}
+        );
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({ message: 'Error while updating budget amount spent for the user' });
+    }
+};
+
+export const addTransaction = async (req: Request, res: Response) => {
+    try {
+        const user = await User.findOneAndUpdate(
+            { username: req.params.username },
+            { $push: { transactions: req.body } },
+            {new:true}
+        );
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({ message: 'Error while inserting new transaction for the user' });
+    }
+};
+
+export const addIncome = async (req: Request, res: Response) => {
+    try {
+        await User.findOneAndUpdate(
+            { username: req.params.username },
+            {
+                $push: { income: { source: req.body.category, amount: req.body.amount } },
+                $inc: { availableBalance: req.body.amount, totalIncome: req.body.amount }
+            },
+            {new:true}
+        );
+        res.json({ message: 'Income added successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error while adding income to user' });
+    }
+};
+
+export const updateIncomeAmount = async (req: Request, res: Response) => {
+    try {
+        const user = await User.findOneAndUpdate(
+            { username: req.params.username, 'income.source': req.body.category },
+            {
+                $inc: { 'income.$.amount': req.body.amount, availableBalance: req.body.amount, totalIncome: req.body.amount }
+            },
+            {new:true}
+        );
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({ message: 'Error while updating income to the user' });
+    }
+};
+
+export const debitAmount = async (req: Request, res: Response) => {
+    try {
+        const user = await User.findOneAndUpdate(
+            { username: req.params.username },
+            {
+                $inc: { availableBalance: -req.body.amount }
+            },
+            {new:true}
+        );
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({ message: 'Error while updating user' });
+    }
+};
+
+export const addBudget = async (req: Request, res: Response) => {
+    try {
+        const result = await User.findOneAndUpdate(
+            { username: req.params.username },
+            {
+                $push: { budgets: { category: req.body.category, amount: req.body.amount, amountSpent: 0 } },
+                $inc: { totalBudget: req.body.amount }
+            },
+            {new:true}
+        );
+        res.json(result);
+    } catch (error) {
+        res.status(500).json({ message: 'Error while inserting new budget to the user' });
+    }
+};
+
+export const updateBudgetAmount = async (req: Request, res: Response) => {
+    try {
+        const result = await User.findOneAndUpdate(
+            { username: req.params.username, "budgets.category": req.body.category },
+            {
+                $set: { totalBudget: req.body.totalBudget, "budgets.$.amount": req.body.amount}
+            },
+            {new:true}
+        );
+        res.json(result);
+    } catch (error) {
+        res.status(500).json({ message: 'Error while updating budget amount for the user' });
+    }
+};
+
+export const addSavingsGoal = async (req: Request, res: Response) => {
+    try {
+        const result = await User.findOneAndUpdate(
+            { username: req.params.username },
+            {
+                $push: { savingsGoals: req.body },
+            },
+            {new:true}
+        );
+        res.json(result);
+    } catch (error) {
+        res.status(500).json({ message: 'Error while inserting new savings goal to the user' });
+    }
+};
+
+export const updateSavingsGoalAmount = async (req: Request, res: Response) => {
+    try {
+        const result = await User.findOneAndUpdate(
+            { username: req.params.username, "savingsGoals.title": req.body.title },
+            { $inc: { "savingsGoals.$.currentAmountSaved": req.body.amount, availableBalance: req.body.amount } },
+            {new:true}
+        );
+        res.json(result);
+    } catch (error) {
+        res.status(500).json({ message: 'Error while updating savings goal amount saved of the user' });
+    }
+};
+
+export const registerUser = async(req:Request, res:Response)=>{
+    try{
+        const username:string = req.body.username;
+        const password:string = req.body.password;
+        const userDocument =  await register(username, password);
+        user = new UserClass(userDocument.username, userDocument.password);
+        res.json(user);
+    } catch(error){
+        res.status(500).json({ message: 'Error while registering user' });
+    }
+}
+
+export const loginUser = async(req:Request, res:Response)=>{
+    try{
+        const username:string = String(req.query.username);
+        const password:string = String(req.query.password);
+        const userDocument= await login(username, password);
+
+        if (userDocument) {
+          user = new UserClass(userDocument.username, userDocument.password);
+          
+          const { _id, __v, ...updatedUser } = userDocument;
+          Object.assign(user, updatedUser);
+        }
+        res.json(user);
+    } catch(error){
+        res.status(500).json({ message: 'Error while user login in' });
+    }
+}
+
+export const addTransactionHandler = async(req:Request, res:Response)=>{
+    try{
+       const transaction:ITransaction = req.body;
+       await user.transaction(transaction);
+       res.json(user);
+    } catch(error){
+        res.status(500).json({ message: 'Error while adding transaction' });
+    }
+}
+
+export const addBudgetHandler = async(req:Request, res:Response)=>{
+    try{
+       await user.setBudget(req.body.category, req.body.amount);
+       res.json(user);
+    } catch(error){
+        res.status(500).json({ message: 'Error while adding budget' });
+    }
+}
+
+export const addSavingsGoalHandler = async(req:Request, res:Response)=>{
+    try{
+       await user.addSavingsGoal(req.body);
+       res.json(user);
+    } catch(error){
+        res.status(500).json({ message: 'Error while adding savings goal' });
+    }
+}
+
+export const generateTotalIncomeAndExpenses = async(req:Request, res:Response)=>{
+
+    const fromDate = new Date(String(req.query.fromDate));
+    const toDate = new Date(String(req.query.toDate));
+
+    try{
+       const report= user.totalIncomeAndExpenses(fromDate, toDate);
+       res.json(report);
+    } catch(error){
+        res.status(500).json({ message: 'Error while generating total income and expenses report of the user' });
+    }
+}
+
+export const generateBudgetSummary = async(req:Request, res:Response)=>{
+    const fromDate = new Date(String(req.query.fromDate));
+    const toDate = new Date(String(req.query.toDate));
+
+    try{
+       const report= user.budgetSummary(fromDate, toDate);
+       res.json(report);
+    } catch(error){
+        res.status(500).json({ message: 'Error while generating budget summary report of the user' });
+    }
+}
+
+export const generateSavingsGoalsProgressReport = async(req:Request, res:Response)=>{
+    const fromDate = new Date(String(req.query.fromDate));
+    const toDate = new Date(String(req.query.toDate));
+    try{
+       const report= user.savingsGoalsProgress(fromDate, toDate);
+       res.json(report);
+    } catch(error){
+        res.status(500).json({ message: 'Error while generating savings goals progress report of the user' });
+    }
+}

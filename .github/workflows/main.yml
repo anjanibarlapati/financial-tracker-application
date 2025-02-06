@@ -1,0 +1,30 @@
+name: Test and Build
+
+on:
+  push:
+    branches:
+      - fingrow-ci-cd-part-2
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  test-and-build:
+    runs-on: macos-latest
+    name: Test and Build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install Dependencies
+        working-directory: ./frontend
+        run: npm install
+
+      - name: Run Tests
+        working-directory: ./frontend
+        run: npm test
+
+      - name: Build 
+        working-directory: ./frontend
+        run: npm run build
+          

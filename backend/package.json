@@ -1,0 +1,35 @@
+{
+  "name": "fingrow",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --watch --runInBand",
+    "dev": "npx ts-node ./src/server.ts",
+    "start": "npx ts-node ./src/index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/jest": "^29.5.13",
+    "@types/nconf": "^0.10.7",
+    "@types/prompt-sync": "^4.2.3",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.2.5",
+    "typescript": "^5.6.2"
+  },
+  "dependencies": {
+    "axios": "^1.7.7",
+    "cors": "^2.8.5",
+    "cross-spawn": "^7.0.6",
+    "csv-parser": "^3.0.0",
+    "express": "^4.21.0",
+    "mongoose": "^8.7.0",
+    "nconf": "^0.12.1",
+    "prompt-sync": "^4.2.0",
+    "ts-node": "^10.9.2"
+  }
+}
