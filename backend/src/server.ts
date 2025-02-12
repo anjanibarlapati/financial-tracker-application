@@ -17,8 +17,11 @@ app.use(express.json());
 
 async function start() {
    try{
-    await dbConnection();
-    await insertUsersData(users);
+      app.listen(port, () => {
+        console.log(`Server running at http://localhost:${port}`);
+      });
+      await dbConnection();
+      await insertUsersData(users);
    } 
    catch(error) {
     throw new Error("Error while connectiong to DB or inserting");
@@ -30,7 +33,3 @@ start();
 
 app.use('/',userRouter);
 
-
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
-});
