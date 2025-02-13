@@ -25,8 +25,7 @@ pipeline {
             steps {
                 script {
                     dir('./backend') {
-                        sh 'npm test'
-                        sh 'npm run coverage'
+                        sh 'npm test -- --coverage --watchAll=false'
                     }
                 }
             }
