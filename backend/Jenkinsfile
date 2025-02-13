@@ -56,10 +56,56 @@ pipeline {
                 }
             }           
         }
+        stage('Pull Image from Docker Hub') {         
+            steps{
+                dir('./backend') {
+                  	sh 'docker pull anjanibarlapati/fingrow-server'   
+                    echo 'Backend Image Pull Completed'    
+                }
+            }           
+        }
+        stage('Run Container') {         
+            steps{
+                dir('./backend') {
+                  	sh 'docker run --name fingrow-server -p 4321:4321 anjanibarlapati/fingrow-server:latest'   
+                    echo 'Backend Container Run Completed'    
+                }
+            }           
+        }
+        stage('List Out Docker Images') {         
+            steps{
+                dir('./backend') {
+                  	sh 'docker ps'   
+                }
+            }           
+        }
+        stage('Stop Backend Container') {         
+            steps{
+                dir('./backend') {
+                  	sh 'docker stop fingrow-server'   
+                    echo 'Backend Container Stop Completed'    
+                }
+            }           
+        }
+        stage('Remove Backend Container') {         
+            steps{
+                dir('./backend') {
+                  	sh 'docker rm fingrow-server'   
+                    echo 'Backend Container Remove Completed'    
+                }
+            }           
+        }
+        stage('List Out All Docker Images') {         
+            steps{
+                dir('./backend') {
+                  	sh 'docker ps -a'   
+                }
+            }           
+        }
     }
     post{
         always {  
-          dir('./frontend') {
+          dir('./backend') {
             sh 'docker logout' 
             echo 'Docker Logout Completed'    
           }
