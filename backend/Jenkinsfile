@@ -64,11 +64,11 @@ pipeline {
                 }
             }           
         }
-        stage('Run Container') {         
-            steps{
+        stage('Run Containers') {  
+            steps{  
                 dir('./backend') {
-                  	sh 'docker run --name fingrow-server -p 4321:4321 anjanibarlapati/fingrow-server:latest'   
-                    echo 'Backend Container Run Completed'    
+                    sh 'docker-compose -f Docker/docker-compose.yml up -d'     
+                    echo 'Backend Containers Run Completed'          
                 }
             }           
         }
@@ -79,26 +79,26 @@ pipeline {
                 }
             }           
         }
-        stage('Stop Backend Container') {         
+        stage('Remove Backend Containers') {         
             steps{
                 dir('./backend') {
-                  	sh 'docker stop fingrow-server'   
-                    echo 'Backend Container Stop Completed'    
-                }
-            }           
-        }
-        stage('Remove Backend Container') {         
-            steps{
-                dir('./backend') {
-                  	sh 'docker rm fingrow-server'   
+                  	sh 'docker-compose -f Docker/docker-compose.yml down'   
                     echo 'Backend Container Remove Completed'    
                 }
             }           
         }
+
         stage('List Out All Docker Images') {         
             steps{
                 dir('./backend') {
                   	sh 'docker ps -a'   
+                }
+            }           
+        }
+        stage('Remove Docker Images') {         
+            steps{
+                dir('./backend') {
+                  	sh 'docker rmi anjanibarlapati/fingrow-server'   
                 }
             }           
         }
