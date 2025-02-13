@@ -1,0 +1,69 @@
+pipeline {
+    agent any
+
+    environment {
+        PATH = "${env.PATH}:/usr/local/bin/"
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials') 
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+        stage('Install Dependencies') {
+            steps {
+                script {
+                    dir('./backend') {
+                        sh 'npm install'
+                    }
+                }
+            }
+        }
+        stage('Run Tests') {
+            steps {
+                script {
+                    dir('./backend') {
+                        sh 'npm test'
+                        sh 'npm run coverage'
+                    }
+                }
+            }
+        }
+        stage('Build Docker Image') {  
+            steps{  
+                dir('./backend') {
+                    sh 'docker build . -t  anjanibarlapati/fingrow-server -f Docker/Dockerfile'     
+                    echo 'Backend Image Build Completed'          
+                }
+            }           
+        }
+
+        stage('Login to Docker Hub') {         
+            steps{   
+                dir('./backend') {
+                   sh 'docker login -u $DOCKERHUB_CREDENTIALS_USR -p $DOCKERHUB_CREDENTIALS_PSW'  
+	               echo 'Docker Login Completed'      
+                }
+            
+            }           
+        }               
+        stage('Push Image to Docker Hub') {         
+            steps{
+                dir('./backend') {
+                  	sh 'docker push anjanibarlapati/fingrow-server'   
+                    echo 'Backend Image Push Completed'    
+                }
+            }           
+        }
+    }
+    post{
+        always {  
+          dir('./frontend') {
+            sh 'docker logout' 
+            echo 'Docker Logout Completed'    
+          }
+        }      
+    }
+}
