@@ -1,0 +1,78 @@
+pipeline {
+    agent any
+
+    environment {
+        PATH = "${env.PATH}:/usr/local/bin/"
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials') 
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+        stage('Install Dependencies') {
+            steps {
+                script {
+                    dir('./frontend') {
+                        sh 'npm install'
+                    }
+                }
+            }
+        }
+        stage('Run Tests') {
+            steps {
+                script {
+                    dir('./frontend') {
+                        sh 'npm test'
+                        sh 'npm run coverage'
+                    }
+                }
+            }
+        }
+        stage('Build') {
+            steps {
+                script {
+                    dir('./frontend') {
+                        sh 'npm run build'
+                    }
+                }
+            }
+        }
+        stage('Build Docker Image') {  
+            steps{  
+                dir('./frontend') {
+                    sh 'docker build . -t  anjanibarlapati/fingrow-app -f Docker/Dockerfile'     
+                    echo 'Frontend Image Build Completed'          
+                }
+            }           
+        }
+
+        stage('Login to Docker Hub') {         
+            steps{   
+                dir('./frontend') {
+                   sh 'docker login -u $DOCKERHUB_CREDENTIALS_USR -p $DOCKERHUB_CREDENTIALS_PSW'  
+	               echo 'Docker Login Completed'      
+                }
+            
+            }           
+        }               
+        stage('Push Image to Docker Hub') {         
+            steps{
+                dir('./frontend') {
+                  	sh 'docker push anjanibarlapati/fingrow-app'   
+                    echo 'Frontend Image Push Completed'    
+                }
+            }           
+        }
+    }
+    post{
+        always {  
+          dir('./frontend') {
+            sh 'docker logout' 
+            echo 'Docker Logout Completed'    
+          }
+        }      
+    }
+}
