@@ -66,6 +66,52 @@ pipeline {
                 }
             }           
         }
+        stage('Pull Image from Docker Hub') {         
+            steps{
+                dir('./frontend') {
+                  	sh 'docker pull anjanibarlapati/fingrow-app'   
+                    echo 'Frontend Image Pull Completed'    
+                }
+            }           
+        }
+        stage('Run Containers') {  
+            steps{  
+                dir('./frontend') {
+                    sh 'docker-compose -f Docker/docker-compose.yml up -d'     
+                    echo 'Frontend Containers Run Completed'          
+                }
+            }           
+        }
+        stage('List Out Docker Images') {         
+            steps{
+                dir('./frontend') {
+                  	sh 'docker ps'   
+                }
+            }           
+        }
+        stage('Remove Frontend Containers') {         
+            steps{
+                dir('./frontend') {
+                  	sh 'docker-compose -f Docker/docker-compose.yml down'   
+                    echo 'Frontend Container Remove Completed'    
+                }
+            }           
+        }
+
+        stage('List Out All Docker Images') {         
+            steps{
+                dir('./frontend') {
+                  	sh 'docker ps -a'   
+                }
+            }           
+        }
+        stage('Remove Docker Images') {         
+            steps{
+                dir('./frontend') {
+                  	sh 'docker rmi anjanibarlapati/fingrow-app'   
+                }
+            }           
+        }
     }
     post{
         always {  
